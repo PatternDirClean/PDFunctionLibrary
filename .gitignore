@@ -1,10 +1,13 @@
-.gradle
+.gradle/
 /build/
 /bin/
 /out/
 /.idea/
 /BDPos/
 /BDPosHttp/
+
+pdfunctionlibrary.properties
+pdfunctionlibrary.xml
 # Ignore Gradle GUI config
 gradle-app.setting
 
