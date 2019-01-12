@@ -12,7 +12,7 @@ import static fybug.nulll.bdpos.BDPos.RN;
  * <p>提供各种条件下的字符过滤</p>
  *
  * @author fybug
- * @version 0.0.6
+ * @version 0.0.7
  * @since PDF 1.3
  */
 @SuppressWarnings( "all" )
@@ -42,6 +42,8 @@ class FuckChar {
                 put(NAMEMARK, "@011");
                 put("@", "@012");
                 put(TABMAPVAL, "@013");
+                put("/*", "@014");
+                put("*/", "@015");
             }});
         }
 
@@ -71,6 +73,9 @@ class FuckChar {
         str = str.replaceAll(ANNOTATION, m.get(ANNOTATION));
         str = str.replaceAll(ROD, m.get(ROD));
         str = str.replaceAll(PERCENTAGE, m.get(PERCENTAGE));
+        str = str.replaceAll(CLASS, m.get(CLASS));
+        str = str.replaceAll("/\\*", m.get("/*"));
+        str = str.replaceAll("\\*/", m.get("*/"));
 
         return str;
     }
@@ -88,6 +93,9 @@ class FuckChar {
         @NotNull String str = s.toString();
         @NotNull final HashMap<String, String> m = getMap();
 
+        str = str.replaceAll(m.get("*/"), "*/");
+        str = str.replaceAll(m.get("/*"), "/*");
+        str = str.replaceAll(m.get(CLASS), CLASS);
         str = str.replaceAll(m.get(PERCENTAGE), PERCENTAGE);
         str = str.replaceAll(m.get(ROD), ROD);
         str = str.replaceAll(m.get(ANNOTATION), ANNOTATION);

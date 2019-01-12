@@ -322,6 +322,7 @@ class Arrarys {
             return append;
         if (append.length == 0)
             return ts;
+
         // 新实例
         @NotNull final T[] newInstance = (T[]) newInstance(ts.getClass().getComponentType(),
                                                            ts.length + append.length);
