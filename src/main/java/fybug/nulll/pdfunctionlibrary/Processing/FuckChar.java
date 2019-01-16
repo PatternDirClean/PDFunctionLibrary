@@ -44,6 +44,7 @@ class FuckChar {
                 put(TABMAPVAL, "@013");
                 put("/*", "@014");
                 put("*/", "@015");
+                put(CSV_FG, "@016");
             }});
         }
 
@@ -198,8 +199,53 @@ class FuckChar {
         return str;
     }
 
+    /**
+     * <p>过滤 CSV 标识符.</p>
+     *
+     * @param s 要过滤的数据
+     *
+     * @return 过滤后的数据
+     *
+     * @since PDF expander 3
+     */
+    @NotNull
+    public static
+    String fuckCSV(@NotNull final CharSequence s) {
+        @NotNull String str = s.toString();
+        @NotNull final HashMap<String, String> m = getMap();
+
+        str = str.replaceAll("@", "@012");
+        str = str.replaceAll(CSV_FG, m.get(CSV_FG));
+        str = str.replaceAll(RN, m.get(RN));
+
+        return str;
+    }
+
+    /**
+     * <p>恢复过滤的 CSV 标识符.</p>
+     *
+     * @param s 要恢复的数据
+     *
+     * @return 恢复后的数据
+     *
+     * @since PDF expander 3
+     */
+    @NotNull
+    public static
+    String refuckCSV(@NotNull final CharSequence s) {
+        @NotNull String str = s.toString();
+        @NotNull final HashMap<String, String> m = getMap();
+
+        str = str.replaceAll(m.get(RN), RN);
+        str = str.replaceAll(m.get(CSV_FG), CSV_FG);
+        str = str.replaceAll(m.get("@"), "@");
+
+        return str;
+    }
+
     @NotNull public static final String TABMAPVAL = "=";
     /* 过滤字段 */
     public final static String ENDMARK = ";", ANDPR = "&", GREATER = "<", LESS = ">", STR = "'",
-            NAME = "`", ANNOTATION = "--", ROD = "/", PERCENTAGE = "%";
+            NAME = "`", ANNOTATION = "--", ROD = "/", PERCENTAGE = "%", /** @since PDF expander 3 */
+    CSV_FG = ",";
 }
