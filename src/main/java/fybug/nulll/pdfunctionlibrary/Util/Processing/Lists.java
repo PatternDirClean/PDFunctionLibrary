@@ -2,9 +2,12 @@ package fybug.nulll.pdfunctionlibrary.Util.Processing;
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
 
+import org.jetbrains.annotations.NonNls;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.RandomAccess;
 
 import fybug.nulll.pdfunctionlibrary.lang.CanEmpty;
 /**
@@ -184,5 +187,36 @@ class Lists {
         for ( int i = 0; i < append.length; i++ )
             ts.add(append[i]);
         return ts;
+    }
+
+    /**
+     * <p>将列表中的元素转化为文本.</p>
+     * <pre>
+     * 将列表中的元素逐个使用 {@link String#valueOf(Object)} 转化
+     * 并在每个元素转化后添加分割字符串
+     * </pre>
+     *
+     * @param ls 要处理的列表
+     * @param s  分割字符
+     *
+     * @return 生成的字符串
+     *
+     * @since PDF 1.3 expander 3
+     */
+    @NotNull
+    @NonNls
+    public static
+    String getString(@NotNull final List ls, @NotNull final String s) {
+        @NotNull final StringBuilder stringBuilder = new StringBuilder();
+
+        if (ls instanceof RandomAccess)
+            for ( int i = 0, lenght = ls.size(); i < lenght; i++ )
+                stringBuilder.append(String.valueOf(ls.get(i))).append(s);
+        else
+            for ( Object l : ls )
+                stringBuilder.append(String.valueOf(l)).append(s);
+
+        stringBuilder.trimToSize();
+        return stringBuilder.toString();
     }
 }

@@ -2,6 +2,8 @@ package fybug.nulll.pdfunctionlibrary.Util.Processing;
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
 
+import org.jetbrains.annotations.NonNls;
+
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collection;
@@ -14,7 +16,7 @@ import static java.lang.reflect.Array.newInstance;
  * <h2>数组相关算法类.</h2>
  *
  * @author fybug
- * @version 0.0.6
+ * @version 0.0.7
  * @since PDF 1.2
  */
 @SuppressWarnings( "All" )
@@ -374,5 +376,32 @@ class Arrarys {
             }
         }
         return mark;
+    }
+
+    /**
+     * <p>将数组中的元素转化为文本.</p>
+     * <pre>
+     * 将会把数组中的元素转逐个使用 {@link String#valueOf(Object)} 转化
+     * 并在每个元素转化后加入指定的分割字符串
+     * </pre>
+     *
+     * @param ts 要处理的数组
+     * @param s  分割字符
+     *
+     * @return 生成的字符串
+     *
+     * @since PDF 1.3 expander 3
+     */
+    @NonNls
+    @NotNull
+    public static
+    <T> String getString(@NotNull final T[] ts, String s) {
+        @NotNull final StringBuilder stringBuilder = new StringBuilder();
+
+        for ( int i = 0; i < ts.length; i++ )
+            stringBuilder.append(String.valueOf(ts[i])).append(s);
+
+        stringBuilder.trimToSize();
+        return stringBuilder.toString();
     }
 }
