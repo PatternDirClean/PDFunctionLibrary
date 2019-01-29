@@ -17,10 +17,6 @@
   -- <a href="https://apidoc.gitee.com/fybug/PDFunctionLibrary">Java Doc</a> --
   <br/><br/>
   -- <a href="https://gitee.com/fybug/PDFunctionLibrary/wikis">Wiki 文档</a> --
-  <br/><br/>
-  -- QQ群: <a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=9f173fe11c0dce9be6e181d8658a1a7ac5e0f7535a6881b2770969710cc764df">590022218</a> --
-  <br/><br/>
-  -- TG群: 算了吧，懒得翻墙了 --
 </p>
 
 -------------------------------------------------------------------------------
