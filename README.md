@@ -40,11 +40,12 @@
 - Util.Porcessing  **数据结构相关算法和工具包**
 
 ## 使用方法
-请导入其 `jar` 文件,文件在 [发行版](https://gitee.com/fybug/PDFunctionLibrary/releases) 、 [附件](https://gitee.com/fybug/PDFunctionLibrary/attach_files) 或项目的 [jar](https://gitee.com/fybug/PDFunctionLibrary/tree/master/jar) 文件夹下可以找到
+请导入其 `jar` 文件,文件在 [发行版](https://gitee.com/fybug/PDFunctionLibrary/releases) 、 [附件](https://gitee.com/fybug/PDFunctionLibrary/attach_files) 或项目的 [jar](https://gitee.com/fybug/PDFunctionLibrary/tree/releases/jar) 文件夹下可以找到
 >发行版中可以看到全部版本<br/>项目下的 jar 文件夹是当前最新的每夜版<br/>附件中是最新的包
 
 ## 使用该库进行开发的项目
-**[PDStream](https://gitee.com/fybug/PDStream)**
+**[PDStream](https://gitee.com/fybug/PDStream)**<br/>
+**[BDPos](https://giee.com/fybug/BDPos)**
 
 ## 集成的导入包
 **[org.jebrains/annotations 16.0.3](https://mvnrepository.com/artifact/org.jetbrains/annotations/13.0)** 
