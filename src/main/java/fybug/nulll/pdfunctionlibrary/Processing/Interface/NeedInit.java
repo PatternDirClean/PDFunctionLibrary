@@ -16,9 +16,9 @@ public
 interface NeedInit {
     /** <p>初始化.</p> */
     @MaybeStop
-    void init();
+    void init() throws Exception;
 
     /** <p>销毁.</p> */
     @MaybeStop
-    void destroy();
+    void destroy() throws Exception;
 }
