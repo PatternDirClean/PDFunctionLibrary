@@ -11,6 +11,7 @@ import fybug.nulll.pdfunctionlibrary.Processing.CheckObject;
 import fybug.nulll.pdfunctionlibrary.Processing.Stop.MaybeStop;
 import fybug.nulll.pdfunctionlibrary.Processing.Stop.Stop;
 import fybug.nulll.pdfunctionlibrary.lang.CanEmpty;
+import fybug.nulll.pdfunctionlibrary.lang.Cleanable;
 import fybug.nulll.pdfunctionlibrary.lang.ConsistentField;
 import fybug.nulll.pdfunctionlibrary.lang.MaybeSynchronized;
 
@@ -30,7 +31,7 @@ import static fybug.nulll.pdfunctionlibrary.Processing.CheckUtil.checkArrayTable
  * @param <V> 要存放的对象类型
  *
  * @author fybug
- * @version 0.0.5
+ * @version 0.0.6
  * @see Stop
  * @see ConsistentField
  * @see CanEmpty
@@ -103,7 +104,10 @@ class DataContainer<V> extends ConsistentField implements Cloneable, CanEmpty {
     @NotNull
     @MaybeStop
     protected
-    V getValue() {return (V) checkArrayTable(value);}
+    V getValue() {
+        Cleanable.checkClose(Cleanable.errmessage, value);
+        return (V) checkArrayTable(value);
+    }
 
     /*
      * Check
@@ -194,7 +198,7 @@ class DataContainer<V> extends ConsistentField implements Cloneable, CanEmpty {
      * <p>已实现基本抽象并处理并发</p>
      *
      * @author fybug
-     * @version 0.0.1
+     * @version 0.0.2
      * @see DataContainer
      * @since PDF 1.2 expander 2
      */
@@ -215,6 +219,7 @@ class DataContainer<V> extends ConsistentField implements Cloneable, CanEmpty {
         @NotNull
         protected
         DataContainer<V> setValue(@Nullable final V value) {
+            Cleanable.checkClose(Cleanable.errmessage, value);
             @Nullable final Object[] v;
 
             synchronized ( this ){
@@ -248,7 +253,7 @@ class DataContainer<V> extends ConsistentField implements Cloneable, CanEmpty {
      * <p>已实现基本抽象但未处理并发</p>
      *
      * @author fybug
-     * @version 0.0.1
+     * @version 0.0.2
      * @see DataContainer
      * @since PDF 1.2 expander 2
      */
@@ -269,6 +274,7 @@ class DataContainer<V> extends ConsistentField implements Cloneable, CanEmpty {
         @NotNull
         protected
         DataContainer<V> setValue(@Nullable final V value) {
+            Cleanable.checkClose(Cleanable.errmessage, value);
             @Nullable final Object[] v;
             v = this.value;
             if (CheckObject.checkNull(v).length < 1)

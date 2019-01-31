@@ -281,9 +281,9 @@ class DataMap<K, V> extends DataGrid<V> {
         @NoSynchronized
         public
         Object clone() throws CloneNotSupportedException {
-            @NotNull final Synchronized<K, V> dataContainer =
-                    (Synchronized<K, V>) super.clone();
-            ((Synchronized) dataContainer).keyLock = new Object();
+            @NotNull final DataMap.Synchronized<K, V> dataContainer =
+                    (DataMap.Synchronized<K, V>) super.clone();
+            ((DataMap.Synchronized) dataContainer).keyLock = new Object();
             return dataContainer;
         }
 

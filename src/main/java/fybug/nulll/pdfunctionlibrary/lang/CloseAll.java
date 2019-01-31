@@ -17,7 +17,7 @@ import fybug.nulll.pdfunctionlibrary.Util.Processing.Arrarys;
  * </pre>
  *
  * @author fybug
- * @version 0.0.6
+ * @version 0.0.7
  * @see ConsistentField
  * @see AutoCloseable
  * @see MaybeSynchronized
@@ -95,6 +95,7 @@ class CloseAll extends ConsistentField implements AutoCloseable, MaybeSynchroniz
     @NotNull
     public
     CloseAll toSynchronized() {
+        Cleanable.checkClose(Cleanable.errmessage, linkedList);
         if (this instanceof Synchronized)
             return this;
         @NotNull final CloseAll c = new Synchronized();
@@ -114,6 +115,7 @@ class CloseAll extends ConsistentField implements AutoCloseable, MaybeSynchroniz
     @NotNull
     public
     CloseAll removerSynchronized() {
+        Cleanable.checkClose(Cleanable.errmessage, linkedList);
         if (this instanceof CloseALL)
             return this;
         @NotNull final CloseAll c = new CloseALL();
@@ -189,7 +191,7 @@ class CloseAll extends ConsistentField implements AutoCloseable, MaybeSynchroniz
      * <h2>{@link CloseAll} 的并发处理类.</h2>
      *
      * @author fybug
-     * @version 0.0.1
+     * @version 0.0.2
      * @see CloseAll
      * @since PDF 1.2 expander 2
      */
@@ -205,6 +207,7 @@ class CloseAll extends ConsistentField implements AutoCloseable, MaybeSynchroniz
         @NotNull
         public
         CloseAll append(@Nullable final AutoCloseable... close) {
+            Cleanable.checkClose(Cleanable.errmessage, linkedList);
             Arrarys.conversionArrayType(close, (v) -> {
                 // 仅锁住该部分，可在添加的同时进行关闭
                 synchronized ( this ){
@@ -241,7 +244,7 @@ class CloseAll extends ConsistentField implements AutoCloseable, MaybeSynchroniz
      * <h2>{@link CloseAll} 的非并发处理类.</h2>
      *
      * @author fybug
-     * @version 0.0.1
+     * @version 0.0.2
      * @see CloseAll
      * @since PDF 1.2 expander 2
      */
@@ -257,6 +260,7 @@ class CloseAll extends ConsistentField implements AutoCloseable, MaybeSynchroniz
         @NotNull
         public
         CloseAll append(@Nullable final AutoCloseable... close) {
+            Cleanable.checkClose(Cleanable.errmessage, linkedList);
             Arrarys.conversionArrayType(close, (v) -> {
                 linkedList.add(v);
                 return null;

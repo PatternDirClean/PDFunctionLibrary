@@ -1,4 +1,8 @@
 package fybug.nulll.pdfunctionlibrary.lang;
+import com.sun.istack.internal.NotNull;
+
+import org.jetbrains.annotations.Nls;
+
 import java.io.Closeable;
 /**
  * <h2>可释放对象.</h2>
@@ -13,12 +17,19 @@ import java.io.Closeable;
  * </pre>
  *
  * @author fybug
- * @version 0.0.6
+ * @version 0.0.7
  * @see Closeable
  * @since PDF 1.2
  */
 public
 interface Cleanable extends Closeable {
+    /**
+     * <p>通用错误信息.</p>
+     *
+     * @since PDF 1.3 expander 3 fix 1
+     */
+    @NotNull String errmessage = "该对象已被关闭";
+
     /**
      * <p>清空.</p>
      * <pre>
@@ -54,4 +65,23 @@ interface Cleanable extends Closeable {
      */
     @Override
     void close();
+
+    /**
+     * <p>检查是否本对象已被关闭.</p>
+     * <pre>
+     * 关闭对象时通常会将一些私有变量设置为 {@code null} ,通过传入这些变量进行检查
+     * 并在合适的时候抛出错误
+     * </pre>
+     *
+     * @param messg 抛出的错误信息
+     * @param o     要检查的变量
+     *
+     * @since PDF 1.3 expander 3 fix 1
+     */
+    static
+    void checkClose(@NotNull @Nls String messg, @NotNull final Object... o) {
+        for ( int i = 0; i < o.length; i++ )
+            if (o[i] == null)
+                throw new Error(messg);
+    }
 }
