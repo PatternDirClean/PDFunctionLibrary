@@ -219,7 +219,7 @@ class DataContainer<V> extends ConsistentField implements Cloneable, CanEmpty {
         @NotNull
         protected
         DataContainer<V> setValue(@Nullable final V value) {
-            Cleanable.checkClose(Cleanable.errmessage, value);
+            Cleanable.checkClose(Cleanable.errmessage, this.value);
             @Nullable final Object[] v;
 
             synchronized ( this ){
@@ -274,7 +274,7 @@ class DataContainer<V> extends ConsistentField implements Cloneable, CanEmpty {
         @NotNull
         protected
         DataContainer<V> setValue(@Nullable final V value) {
-            Cleanable.checkClose(Cleanable.errmessage, value);
+            Cleanable.checkClose(Cleanable.errmessage, this.value);
             @Nullable final Object[] v;
             v = this.value;
             if (CheckObject.checkNull(v).length < 1)
