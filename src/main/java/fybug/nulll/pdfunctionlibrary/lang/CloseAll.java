@@ -29,11 +29,11 @@ import fybug.nulll.pdfunctionlibrary.Util.Processing.Arrarys;
 public abstract
 class CloseAll extends ConsistentField implements AutoCloseable, MaybeSynchronized {
     /** <p>保存要关闭的对象.</p> */
-    @NotNull protected LinkedList<AutoCloseable> linkedList = new LinkedList<>();
+    @NotNull protected LinkedList<AutoCloseable> linkedList;
 
     /** <p>构造一个空的关闭容器.</p> */
     protected
-    CloseAll() {}
+    CloseAll() {linkedList = new LinkedList<>();}
 
     /**
      * <p>构造关闭容器并添加要关闭的对象.</p>
@@ -41,7 +41,10 @@ class CloseAll extends ConsistentField implements AutoCloseable, MaybeSynchroniz
      * @param close 要关闭的对象
      */
     protected
-    CloseAll(@Nullable final AutoCloseable... close) {append(close);}
+    CloseAll(@Nullable final AutoCloseable... close) {
+        this();
+        append(close);
+    }
 
     @NoSynchronized
     @Override

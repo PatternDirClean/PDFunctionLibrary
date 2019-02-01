@@ -46,15 +46,20 @@ import static fybug.nulll.pdfunctionlibrary.Processing.CheckUtil.checkArrayTable
 public abstract
 class DataContainer<V> extends ConsistentField implements Cloneable, CanEmpty {
     // V
-    @Nullable protected Object[] value = new Object[1];
+    @Nullable protected Object[] value;
 
     /** <p>构造一个空的数据容器.</p> */
     protected
-    DataContainer() {}
+    DataContainer() {
+        value = new Object[1];
+    }
 
     /** <p>构造一个数据容器并初始化.</p> */
     protected
-    DataContainer(@Nullable final V t) { setValue(t); }
+    DataContainer(@Nullable final V t) {
+        this();
+        setValue(t);
+    }
 
     @Override
     protected
@@ -206,7 +211,7 @@ class DataContainer<V> extends ConsistentField implements Cloneable, CanEmpty {
     public static abstract
     class Synchronized<V> extends DataContainer<V> {
         protected
-        Synchronized() {}
+        Synchronized() { super(); }
 
         protected
         Synchronized(@NotNull final V t)
@@ -219,7 +224,7 @@ class DataContainer<V> extends ConsistentField implements Cloneable, CanEmpty {
         @NotNull
         protected
         DataContainer<V> setValue(@Nullable final V value) {
-            Cleanable.checkClose(Cleanable.errmessage, this.value);
+            Cleanable.checkClose(Cleanable.errmessage, (Object) this.value);
             @Nullable final Object[] v;
 
             synchronized ( this ){
@@ -261,7 +266,7 @@ class DataContainer<V> extends ConsistentField implements Cloneable, CanEmpty {
     public static abstract
     class DataCONTAINER<V> extends DataContainer<V> {
         protected
-        DataCONTAINER() {}
+        DataCONTAINER() {super();}
 
         protected
         DataCONTAINER(V t)
@@ -274,7 +279,7 @@ class DataContainer<V> extends ConsistentField implements Cloneable, CanEmpty {
         @NotNull
         protected
         DataContainer<V> setValue(@Nullable final V value) {
-            Cleanable.checkClose(Cleanable.errmessage, this.value);
+            Cleanable.checkClose(Cleanable.errmessage, (Object) this.value);
             @Nullable final Object[] v;
             v = this.value;
             if (CheckObject.checkNull(v).length < 1)
