@@ -3,6 +3,7 @@ import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
 
 import fybug.nulll.pdfunctionlibrary.Annotations.NoSynchronized;
+import fybug.nulll.pdfunctionlibrary.Processing.CObject;
 import fybug.nulll.pdfunctionlibrary.Processing.CheckObject;
 /**
  * <h2>预检查对比对象.</h2>
@@ -13,14 +14,14 @@ import fybug.nulll.pdfunctionlibrary.Processing.CheckObject;
  * </pre>
  *
  * @author fybug
- * @version 0.0.4
+ * @version 0.0.5
  * @see Object#equals(Object)
  * @since PDF 1.2
  */
 @SuppressWarnings( "all" )
 @NoSynchronized
 public abstract
-class ConsistentField {
+class ConsistentField extends CObject {
     /** {@Hide} */
     protected
     ConsistentField() {}
@@ -35,9 +36,9 @@ class ConsistentField {
         switch ( CheckObject.checkEquals(this, obj) ) {
             default:
                 return false;
-            case 1:
+            case 1: // 同一个对象
                 return true;
-            case 2:
+            case 2: // 同一个类的实例
                 return consistent(obj);
         }
     }

@@ -54,7 +54,7 @@ class DataGrid<V> extends ConsistentField
     @NoSynchronized
     public
     Object clone() throws CloneNotSupportedException {
-        @NotNull final DataGrid dataContainer = (DataGrid) super.clone();
+        @NotNull final DataGrid<V> dataContainer = (DataGrid<V>) super.clone();
         dataContainer.value = cloneField(value);
         return dataContainer;
     }
@@ -70,7 +70,7 @@ class DataGrid<V> extends ConsistentField
     @NoSynchronized
     protected
     boolean consistent(@NotNull final Object obj)
-    { return equalsFidle(value, ((DataGrid<V>) obj).value); }
+    { return equalsFidle(value, ((DataGrid<?>) obj).value); }
 
     /*
      * Value
@@ -157,9 +157,9 @@ class DataGrid<V> extends ConsistentField
     @NotNull
     public
     DataGrid<V> toSynchronized() {
-        if (this instanceof Synchronized)
+        if (this instanceof Synchronized<?>)
             return this;
-        @NotNull final DataGrid d = new Synchronized();
+        @NotNull final DataGrid<V> d = new Synchronized<>();
         d.value = this.value;
         return d;
     }
@@ -176,9 +176,9 @@ class DataGrid<V> extends ConsistentField
     @NotNull
     public
     DataGrid<V> removerSynchronized() {
-        if (this instanceof DataGRID)
+        if (this instanceof DataGRID<?>)
             return this;
-        @NotNull final DataGrid d = new DataGRID();
+        @NotNull final DataGrid<V> d = new DataGRID<>();
         d.value = this.value;
         return d;
     }
@@ -196,8 +196,8 @@ class DataGrid<V> extends ConsistentField
      */
     @NotNull
     public static
-    DataGrid getDataGrid()
-    { return new DataGRID(); }
+    DataGrid<?> getDataGrid()
+    { return new DataGRID<>(); }
 
     /**
      * <p>获取{@link DataGrid} 的实现类.</p>
@@ -212,7 +212,7 @@ class DataGrid<V> extends ConsistentField
     @NotNull
     public static
     <V> DataGrid<V> getDataGrid(@Nullable final V v)
-    { return new DataGRID(v); }
+    { return new DataGRID<>(v); }
 
     /**
      * <p>获取{@link DataGrid} 的并发实现类.</p>
@@ -223,8 +223,8 @@ class DataGrid<V> extends ConsistentField
      */
     @NotNull
     public static
-    DataGrid getSynchronized()
-    { return new Synchronized(); }
+    DataGrid<?> getSynchronized()
+    { return new Synchronized<>(); }
 
     /**
      * <p>获取{@link DataGrid} 的并发实现类.</p>
@@ -239,7 +239,7 @@ class DataGrid<V> extends ConsistentField
     @NotNull
     public static
     <V> DataGrid<V> getSynchronized(@Nullable final V v)
-    { return new Synchronized(v); }
+    { return new Synchronized<>(v); }
 
     /**
      * <h2>{@link DataGrid} 的并发实现类.</h2>

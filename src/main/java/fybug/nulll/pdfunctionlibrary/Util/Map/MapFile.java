@@ -100,13 +100,13 @@ interface MapFile<K, V> extends CanEmpty {
     /** <p>创建一个使用数组的映射集.</p> */
     @NotNull
     static
-    ArrayMap userArray()
+    ArrayMap<?, ?> userArray()
     { return new ArrayMap(); }
 
     /** <p>创建一个使用链表的映射集.</p> */
     @NotNull
     static
-    LinkMap userLink()
+    LinkMap<?, ?> userLink()
     { return new LinkMap(); }
 
     @NotNull

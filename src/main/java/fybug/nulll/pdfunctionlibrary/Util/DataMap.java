@@ -62,7 +62,7 @@ class DataMap<K, V> extends DataGrid<V> {
     @NoSynchronized
     protected
     boolean consistent(@NotNull final Object obj)
-    { return super.consistent(obj) && equalsFidle(key, ((DataMap<K, V>) obj).key); }
+    { return super.consistent(obj) && equalsFidle(key, ((DataMap<?, ?>) obj).key); }
 
     /*
      * Key
@@ -191,7 +191,7 @@ class DataMap<K, V> extends DataGrid<V> {
     @NotNull
     public
     DataMap<K, V> removerSynchronized() {
-        if (this instanceof DataMAP)
+        if (this instanceof DataMAP<?, ?>)
             return this;
         @NotNull final DataMAP<K, V> s = new DataMAP();
         s.key = this.key;
@@ -212,7 +212,7 @@ class DataMap<K, V> extends DataGrid<V> {
      */
     @NotNull
     public static
-    DataMap getDataMap()
+    DataMap<?, ?> getDataMap()
     {return new DataMAP();}
 
     /**
@@ -239,7 +239,7 @@ class DataMap<K, V> extends DataGrid<V> {
      */
     @NotNull
     public static
-    DataMap getSynchronized()
+    DataMap<?, ?> getSynchronized()
     { return new Synchronized(); }
 
     /**
@@ -281,9 +281,9 @@ class DataMap<K, V> extends DataGrid<V> {
         @NoSynchronized
         public
         Object clone() throws CloneNotSupportedException {
-            @NotNull final DataMap.Synchronized<K, V> dataContainer =
-                    (DataMap.Synchronized<K, V>) super.clone();
-            ((DataMap.Synchronized) dataContainer).keyLock = new Object();
+            @NotNull final DataMap.Synchronized<?, ?> dataContainer =
+                    (DataMap.Synchronized<?, ?>) super.clone();
+            ((DataMap.Synchronized<?, ?>) dataContainer).keyLock = new Object();
             return dataContainer;
         }
 

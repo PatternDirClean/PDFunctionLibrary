@@ -31,7 +31,7 @@ import static fybug.nulll.pdfunctionlibrary.Processing.CheckUtil.checkArrayTable
  * @param <V> 要存放的对象类型
  *
  * @author fybug
- * @version 0.0.6
+ * @version 0.0.7
  * @see Stop
  * @see ConsistentField
  * @see CanEmpty
@@ -71,10 +71,10 @@ class DataContainer<V> extends ConsistentField implements Cloneable, CanEmpty {
     @NotNull
     @Override
     @NoSynchronized
-    protected
+    public
     Object clone() throws CloneNotSupportedException {
-        @NotNull DataContainer<V> dataContainer;
-        dataContainer = (DataContainer<V>) super.clone();
+        @NotNull DataContainer<?> dataContainer;
+        dataContainer = (DataContainer<?>) super.clone();
         dataContainer.value = cloneField(value);
         return dataContainer;
     }
@@ -83,7 +83,7 @@ class DataContainer<V> extends ConsistentField implements Cloneable, CanEmpty {
     @NoSynchronized
     protected
     boolean consistent(@NotNull final Object obj)
-    { return equalsFidle(value, ((DataContainer<V>) obj).value); }
+    { return equalsFidle(value, ((DataContainer<?>) obj).value); }
 
     /*
      * Value
@@ -166,7 +166,7 @@ class DataContainer<V> extends ConsistentField implements Cloneable, CanEmpty {
         if (t == null)
             return null;
 
-        @NotNull final Class<T> tClass = (Class<T>) t.getClass();
+        @NotNull final Class<?> tClass = (Class<?>) t.getClass();
 
         if (tClass.isArray()) {
             // 克隆数组
@@ -191,7 +191,7 @@ class DataContainer<V> extends ConsistentField implements Cloneable, CanEmpty {
             try {
                 t = (T) ((CObject) t).clone();
             } catch ( CloneNotSupportedException e ) {
-                // ig
+                // fuck
             }
         }
 
