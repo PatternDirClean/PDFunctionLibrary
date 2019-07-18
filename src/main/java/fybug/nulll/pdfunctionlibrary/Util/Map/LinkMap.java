@@ -23,13 +23,6 @@ class LinkMap<K, V> extends LinkedList<DataMap<K, V>> implements MapFile<K, V> {
     protected int mark = 0;
 
     @Override
-    protected
-    void finalize() throws Throwable {
-        super.finalize();
-        close();
-    }
-
-    @Override
     @NotNull
     public
     LinkMap<K, V> add(@Nullable final K k, @Nullable final V v) {
@@ -86,23 +79,4 @@ class LinkMap<K, V> extends LinkedList<DataMap<K, V>> implements MapFile<K, V> {
     @Override
     public
     boolean isEmpty() { return size() == 0; }
-
-    @Override
-    public
-    boolean isNull() { return isEmpty(); }
-
-    @Override
-    public
-    void clean() {
-        clear();
-        mark = 0;
-    }
-
-    @Override
-    public
-    void free() { clean(); }
-
-    @Override
-    public
-    void close() { free(); }
 }

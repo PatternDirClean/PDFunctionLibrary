@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import fybug.nulll.pdfunctionlibrary.Annotations.NoSynchronized;
 import fybug.nulll.pdfunctionlibrary.Util.DataMap;
+
 /**
  * <p>使用了数组实现的映射集.</p>
  *
@@ -21,13 +22,6 @@ import fybug.nulll.pdfunctionlibrary.Util.DataMap;
 public
 class ArrayMap<K, V> extends ArrayList<DataMap<K, V>> implements MapFile<K, V> {
     protected int mark = 0;
-
-    @Override
-    protected
-    void finalize() throws Throwable {
-        super.finalize();
-        close();
-    }
 
     @Override
     @NotNull
@@ -85,23 +79,4 @@ class ArrayMap<K, V> extends ArrayList<DataMap<K, V>> implements MapFile<K, V> {
     @Override
     public
     boolean isEmpty() { return size() == 0; }
-
-    @Override
-    public
-    boolean isNull() { return isEmpty(); }
-
-    @Override
-    public
-    void clean() {
-        clear();
-        mark = 0;
-    }
-
-    @Override
-    public
-    void free() { clean(); }
-
-    @Override
-    public
-    void close() { free(); }
 }

@@ -7,6 +7,7 @@ import java.util.Iterator;
 import fybug.nulll.pdfunctionlibrary.Annotations.NoSynchronized;
 import fybug.nulll.pdfunctionlibrary.Util.DataMap;
 import fybug.nulll.pdfunctionlibrary.lang.CanEmpty;
+
 /**
  * <h2>数据映射集.</h2>
  * <pre>
@@ -29,7 +30,7 @@ import fybug.nulll.pdfunctionlibrary.lang.CanEmpty;
 @SuppressWarnings( "all" )
 @NoSynchronized
 public
-interface MapFile<K, V> extends CanEmpty {
+interface MapFile<K, V> {
     /**
      * <p>添加一个映射.</p>
      *
