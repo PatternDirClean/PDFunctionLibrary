@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import fybug.nulll.pdfunctionlibrary.Processing.Stop.CallStop;
 import fybug.nulll.pdfunctionlibrary.Processing.Stop.MaybeStop;
 
-import static fybug.nulll.pdfunctionlibrary.Processing.CheckObject.checkNull;
+import static fybug.nulll.pdfunctionlibrary.Processing.CheckObjectTOOL.checkNull;
 /**
  * <h2>容器检查工具包.</h2>
  * <pre>
@@ -21,11 +21,11 @@ import static fybug.nulll.pdfunctionlibrary.Processing.CheckObject.checkNull;
  */
 @SuppressWarnings( "all" )
 public final
-class CheckUtil {
+class CheckUtilTOOL {
     /** {@Hide} */
     @Deprecated
     private
-    CheckUtil() {}
+    CheckUtilTOOL() {}
 
     /**
      * <p>检查原子变量是否为空.</p>
@@ -40,47 +40,6 @@ class CheckUtil {
         if (t == null)
             throw CallStop.INSTANCE.getInstance();
         return t;
-    }
-
-    /**
-     * <p>检查数组格是否为空.</p>
-     *
-     * @return 该数组格中的内容
-     */
-    @MaybeStop
-    @NotNull
-    public static
-    <T> T checkArrayTable(@Nullable final T[] ts) {
-        checkNull(ts);
-        if (ts.length < 1)
-            throw CallStop.INSTANCE.getInstance();
-        return checkNull(ts[0]);
-    }
-
-    /** <p>对比数组格.</p> */
-    public static
-    <T> boolean equalsArrayTable(@Nullable final T[] th, @Nullable final T[] obj) {
-        if (th == null)
-            return obj == null;
-        else if (th[0] == null)
-            return obj[0] == null;
-        else {
-            if (obj == null || obj[0] == null)
-                return false;
-            return th[0].equals(obj[0]);
-        }
-    }
-
-    /** <p>对比数组格.</p> */
-    public static
-    boolean equalsArrayTable(@Nullable final int[] th, @Nullable final int[] obj) {
-        if (th == null)
-            return obj == null;
-        else {
-            if (obj == null)
-                return false;
-            return th[0] == obj[0];
-        }
     }
 
     /** <p>对比数组.</p> */
