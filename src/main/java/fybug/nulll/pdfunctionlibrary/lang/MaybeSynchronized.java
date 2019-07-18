@@ -1,7 +1,8 @@
 package fybug.nulll.pdfunctionlibrary.lang;
 import com.sun.istack.internal.NotNull;
+
 /**
- * <h2>多类接口 - 并发.</h2>
+ * <h2>多态接口 - 并发.</h2>
  * <pre>
  * 实现该接口的对象都应该是抽象类或接口
  * 并有其并发和非并发处理实现
@@ -29,7 +30,7 @@ interface MaybeSynchronized {
     /**
      * <p>保证该对象为非并发处理对象.</p>
      * <p>如果该对象是非并发对象则会返回该对象，否则会进行数据转移<br/>
-     * 在非并发的条件下，该类对象的速度通常较快</p>
+     * 在非并发的条件下，该类对象的运行效率通常较快</p>
      */
     @NotNull
     MaybeSynchronized removerSynchronized();

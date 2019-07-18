@@ -4,7 +4,8 @@ import com.sun.istack.internal.Nullable;
 
 import fybug.nulll.pdfunctionlibrary.Annotations.NoSynchronized;
 import fybug.nulll.pdfunctionlibrary.Processing.CObject;
-import fybug.nulll.pdfunctionlibrary.Processing.CheckObject;
+import fybug.nulll.pdfunctionlibrary.Processing.CheckObjectTOOL;
+
 /**
  * <h2>预检查对比对象.</h2>
  * <pre>
@@ -33,7 +34,7 @@ class ConsistentField extends CObject {
     @Override
     public final
     boolean equals(@Nullable final Object obj) {
-        switch ( CheckObject.checkEquals(this, obj) ) {
+        switch ( CheckObjectTOOL.checkEquals(this, obj) ) {
             default:
                 return false;
             case 1: // 同一个对象
@@ -44,10 +45,10 @@ class ConsistentField extends CObject {
     }
 
     /**
-     * <p>对比内部字段是否一致.</p>
+     * <p>检查对象是否相同.</p>
      * <pre>
-     * 用于检查其中的变量是否相同
-     * 应在检查类型和空对象后调用
+     * 在前面已使用 {@link #equals(Object)} 方法进行了检查，实际比对的时候也使用 {@link #equals(Object)}
+     * 方法。但是比对逻辑在该方法中
      * </pre>
      */
     protected abstract

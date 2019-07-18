@@ -6,12 +6,13 @@ import java.util.LinkedList;
 
 import fybug.nulll.pdfunctionlibrary.Annotations.CanSynchronized;
 import fybug.nulll.pdfunctionlibrary.Annotations.NoSynchronized;
-import fybug.nulll.pdfunctionlibrary.Processing.CheckObject;
-import fybug.nulll.pdfunctionlibrary.Util.Processing.Arrarys;
+import fybug.nulll.pdfunctionlibrary.Processing.CheckObjectTOOL;
+import fybug.nulll.pdfunctionlibrary.Util.Processing.ArraryTOOL;
+
 /**
- * <h2>关闭容器.</h2>
+ * <h2>集中释放工具.</h2>
  * <pre>
- * 提供一个存放可关闭对象的容器，用于统一释放
+ * 该工具用于存放多个可释放对象，在关闭的时候可批量操作
  * 可根据需要使用工场方法获取并发或去并发类
  * 关闭后也可继续使用
  * </pre>
@@ -31,14 +32,14 @@ class CloseAll extends ConsistentField implements AutoCloseable, MaybeSynchroniz
     /** <p>保存要关闭的对象.</p> */
     @NotNull protected LinkedList<AutoCloseable> linkedList;
 
-    /** <p>构造一个空的关闭容器.</p> */
+    /** <p>构造一个空的容器.</p> */
     protected
     CloseAll() {linkedList = new LinkedList<>();}
 
     /**
-     * <p>构造关闭容器并添加要关闭的对象.</p>
+     * <p>构造容器并添加要集中释放的对象.</p>
      *
-     * @param close 要关闭的对象
+     * @param close 要释放的对象
      */
     protected
     CloseAll(@Nullable final AutoCloseable... close) {
@@ -50,10 +51,10 @@ class CloseAll extends ConsistentField implements AutoCloseable, MaybeSynchroniz
     @Override
     protected
     boolean consistent(@NotNull final Object o)
-    {return CheckObject.equalsFidle(linkedList, ((CloseAll) o).linkedList);}
+    {return CheckObjectTOOL.equalsFidle(linkedList, ((CloseAll) o).linkedList);}
 
     /**
-     * <p>添加要关闭的对象.</p>
+     * <p>追加要关闭的对象.</p>
      *
      * @param close 追加的要关闭的对象
      *
@@ -64,7 +65,7 @@ class CloseAll extends ConsistentField implements AutoCloseable, MaybeSynchroniz
     CloseAll append(@Nullable final AutoCloseable... close);
 
     /**
-     * <p>添加要关闭的对象.</p>
+     * <p>放入要关闭的对象.</p>
      *
      * @param t 要追加的要关闭的对象
      *
@@ -88,9 +89,6 @@ class CloseAll extends ConsistentField implements AutoCloseable, MaybeSynchroniz
      */
 
     /**
-     * <p>保证该对象为并发处理对象.</p>
-     * <p>如果该对象是并发对象则会返回该对象，否则会进行数据转移</p>
-     *
      * @return {@link CloseAll} 的并发处理对象
      *
      * @see Synchronized
@@ -99,18 +97,17 @@ class CloseAll extends ConsistentField implements AutoCloseable, MaybeSynchroniz
     public
     CloseAll toSynchronized() {
         Cleanable.checkClose(Cleanable.errmessage, linkedList);
+
+        /* 检查类型 */
         if (this instanceof Synchronized)
             return this;
+
         @NotNull final CloseAll c = new Synchronized();
         c.linkedList = this.linkedList;
         return c;
     }
 
     /**
-     * <p>保证该对象为非并发处理对象.</p>
-     * <p>如果该对象是非并发对象则会返回该对象，否则会进行数据转移<br/>
-     * 在非并发的条件下，该类对象的速度通常较快</p>
-     *
      * @return {@link CloseAll} 的非并发处理对象
      *
      * @see CloseALL
@@ -119,8 +116,11 @@ class CloseAll extends ConsistentField implements AutoCloseable, MaybeSynchroniz
     public
     CloseAll removerSynchronized() {
         Cleanable.checkClose(Cleanable.errmessage, linkedList);
+
+        /* 检查类型 */
         if (this instanceof CloseALL)
             return this;
+
         @NotNull final CloseAll c = new CloseALL();
         c.linkedList = this.linkedList;
         return c;
@@ -131,7 +131,7 @@ class CloseAll extends ConsistentField implements AutoCloseable, MaybeSynchroniz
      */
 
     /**
-     * <p>获取加入并发处理的{@link CloseAll} 对象.</p>
+     * <p>获取加入并发处理的 {@link CloseAll} 对象.</p>
      *
      * @return
      *
@@ -144,10 +144,10 @@ class CloseAll extends ConsistentField implements AutoCloseable, MaybeSynchroniz
     CloseAll getSynchronized() {return new Synchronized();}
 
     /**
-     * <p>获取加入并发处理的{@link CloseAll} 对象.</p>
-     * <p>并加入初始值</p>
+     * <p>获取加入并发处理的 {@link CloseAll} 对象.</p>
+     * <p>并放入初始值</p>
      *
-     * @param close 加入的初始值
+     * @param close 初始值
      *
      * @return
      *
@@ -161,7 +161,7 @@ class CloseAll extends ConsistentField implements AutoCloseable, MaybeSynchroniz
     {return new Synchronized(close);}
 
     /**
-     * <p>获取{@link CloseAll} 对象.</p>
+     * <p>获取 {@link CloseAll} 对象.</p>
      *
      * @return
      *
@@ -174,10 +174,10 @@ class CloseAll extends ConsistentField implements AutoCloseable, MaybeSynchroniz
     CloseAll getCloseAll() {return new CloseALL();}
 
     /**
-     * <p>获取{@link CloseAll} 对象.</p>
-     * <p>并加入初始值</p>
+     * <p>获取 {@link CloseAll} 对象.</p>
+     * <p>并放入初始值</p>
      *
-     * @param close 加入的初始值
+     * @param close 初始值
      *
      * @return
      *
@@ -191,7 +191,7 @@ class CloseAll extends ConsistentField implements AutoCloseable, MaybeSynchroniz
     {return new CloseALL(close);}
 
     /**
-     * <h2>{@link CloseAll} 的并发处理类.</h2>
+     * <h2> {@link CloseAll} 的并发处理类.</h2>
      *
      * @author fybug
      * @version 0.0.2
@@ -199,8 +199,10 @@ class CloseAll extends ConsistentField implements AutoCloseable, MaybeSynchroniz
      * @since PDF 1.2 expander 2
      */
     @CanSynchronized
-    public static
+    private static
     class Synchronized extends CloseAll {
+        private final Object lock = new Object();
+
         public
         Synchronized() {}
 
@@ -211,13 +213,12 @@ class CloseAll extends ConsistentField implements AutoCloseable, MaybeSynchroniz
         public
         CloseAll append(@Nullable final AutoCloseable... close) {
             Cleanable.checkClose(Cleanable.errmessage, linkedList);
-            Arrarys.conversionArrayType(close, (v) -> {
+            ArraryTOOL.forEach(close, (v) -> {
                 // 仅锁住该部分，可在添加的同时进行关闭
-                synchronized ( this ){
+                synchronized ( lock ){
                     linkedList.add(v);
                 }
-                return null;
-            }, AutoCloseable[].class);
+            });
             return this;
         }
 
@@ -229,7 +230,7 @@ class CloseAll extends ConsistentField implements AutoCloseable, MaybeSynchroniz
             ch:
             while( true ){
                 // 仅锁住该部分，在进行关闭的时候可进行添加
-                synchronized ( this ){
+                synchronized ( lock ){
                     if ((closeable = linkedList.poll()) == null)
                         break ch;
                 }
@@ -264,10 +265,7 @@ class CloseAll extends ConsistentField implements AutoCloseable, MaybeSynchroniz
         public
         CloseAll append(@Nullable final AutoCloseable... close) {
             Cleanable.checkClose(Cleanable.errmessage, linkedList);
-            Arrarys.conversionArrayType(close, (v) -> {
-                linkedList.add(v);
-                return null;
-            }, AutoCloseable[].class);
+            ArraryTOOL.forEach(close, (v) -> linkedList.add(v));
             return this;
         }
 
@@ -283,6 +281,7 @@ class CloseAll extends ConsistentField implements AutoCloseable, MaybeSynchroniz
                 try {
                     closeable.close();
                 } catch ( Exception ignored ) {
+                    // 无视
                 }
             }
         }

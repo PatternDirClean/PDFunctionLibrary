@@ -7,12 +7,11 @@ import java.io.Closeable;
 /**
  * <h2>可释放对象.</h2>
  * <pre>
- * 实现该接口代表该类可使用 <b>内释放</b> 功能
- * 实现该接口则代表该类拥有 可关闭、可复用 的特性
+ * 实现该接口则代表该类拥有 可关闭 的特性
  * </pre>
  * <pre>
  * 要清空该类应使用 {@link #clean()}
- * 要进行内释放应使用 {@link #free()}
+ * 要进行释放应使用 {@link #free()}
  * 要彻底关闭该类应使用 {@link #close()}
  * </pre>
  *
@@ -42,7 +41,7 @@ interface Cleanable extends Closeable {
     void clean();
 
     /**
-     * <p>内释放.</p>
+     * <p>释放.</p>
      * <pre>
      * 如果内部对象应该是可关闭对象则会关闭并释放引用
      * 如果内部对象不一定是可关闭对象，则于 {@link #clean()} 相同
@@ -51,7 +50,8 @@ interface Cleanable extends Closeable {
      * <b>要注意要锁定要关闭的对象</b>
      * </pre>
      */
-    void free();
+    default
+    void free() {clean();}
 
     /**
      * <p>关闭.</p>
@@ -64,7 +64,8 @@ interface Cleanable extends Closeable {
      * </pre>
      */
     @Override
-    void close();
+    default
+    void close() {free();}
 
     /**
      * <p>检查是否本对象已被关闭.</p>
@@ -74,7 +75,7 @@ interface Cleanable extends Closeable {
      * </pre>
      *
      * @param messg 抛出的错误信息
-     * @param o     要检查的变量
+     * @param o     要检查的变量列表
      *
      * @since PDF 1.3 expander 3 fix 1
      */
