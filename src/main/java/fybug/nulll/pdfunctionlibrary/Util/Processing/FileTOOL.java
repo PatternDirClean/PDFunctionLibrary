@@ -17,11 +17,11 @@ import java.util.Iterator;
  */
 @SuppressWarnings( "all" )
 final public
-class Files {
+class FileTOOL {
     /** {@Hide} */
     @Deprecated
     private
-    Files() {}
+    FileTOOL() {}
 
     /**
      * <p>路径分隔符.</p>
@@ -32,8 +32,8 @@ class Files {
 
     /**
      * <h2>路径过滤任务类型.</h2>
-     * {@link Files#removeFile(Collection, RemoveTast)} 和
-     * {@link Files#removeFile(File[], RemoveTast)}的执行参数
+     * {@link FileTOOL#removeFile(Collection, RemoveTast)} 和
+     * {@link FileTOOL#removeFile(File[], RemoveTast)}的执行参数
      */
     public
     enum RemoveTast {

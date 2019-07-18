@@ -2,8 +2,6 @@ package fybug.nulll.pdfunctionlibrary.Util.Processing;
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
 
-import org.jetbrains.annotations.NonNls;
-
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collection;
@@ -21,14 +19,16 @@ import static java.lang.reflect.Array.newInstance;
  */
 @SuppressWarnings( "All" )
 final public
-class Arrarys {
+class ArraryTOOL {
     /** {@Hide} */
     @Deprecated
     private
-    Arrarys() {}
+    ArraryTOOL() {}
 
-    /*
+    /* STAT
      * UnifiedArray
+     *
+     * 修整数组
      */
 
     /**
@@ -124,6 +124,9 @@ class Arrarys {
     public static
     float[] unifiedArray(@Nullable final float[] t)
     { return t == null || t.length == 0 ? null : t; }
+    /* END
+     * UnifiedArray
+     */
 
     /*
      * 算法
@@ -166,12 +169,8 @@ class Arrarys {
                 continue;
 
             // 使用接口进行转化
-            out[index] = coupler.conversionTo(t);
-            index++;
+            out[index++] = coupler.conversionTo(t);
         }
-
-        /* 去除空数据 */
-        out = Arrarys.trim(out);
 
         return out;
     }
@@ -198,40 +197,6 @@ class Arrarys {
     }
 
     /**
-     * <p>转化为字符串类型数组.</p>
-     * <p>会调用每一个对象的{@link Object#toString()} 方法<br/>
-     * 如果其中的对象为 <b>NULL</b> 则会转换为{@code ""}</p>
-     *
-     * @param t 要转化的数组<br/>
-     *          不会被转化过程影响
-     *
-     * @return 转化为字符串的数组，如果传入的是空对象或空数组则会返回空的字符串数组
-     *
-     * @see Object#toString()
-     */
-    @NotNull
-    public static
-    <T extends Object> String[] toString(@Nullable final T[] t) {
-        // 参数检查
-        if (t == null || t.length == 0)
-            return new String[0];
-        @NotNull //* 输出结果长度必定与输入内容相同 *//
-                String[] strings = new String[t.length]; // 输出的结果
-        @Nullable String s;
-        @Nullable T ts;
-        /* 遍历输入的内容 */
-        for ( int i = 0; i < strings.length; i++ ){
-            ts = t[i];
-            if (ts == null || (s = ts.toString()) == null)
-                /* toString 后仍是 null */
-                s = "";
-            // 加入结果中
-            strings[i] = s;
-        }
-        return strings;
-    }
-
-    /**
      * <p>清除数组中的空项.</p>
      * <p>如果是{@link CanEmpty}的子类<br/>
      * 将会调用{@link CanEmpty#isNull()}和{@link CanEmpty#isEmpty()}判断是否是空数据</p>
@@ -252,15 +217,16 @@ class Arrarys {
         @NotNull T[] arrayList = (T[]) Array.newInstance(t.getClass().getComponentType(), t.length);
         @Nullable T ts;
         int idmark = 0; // 标记位置
+
         /* 遍历输入的数据 */
-        for ( int i = 0; i < arrayList.length; i++ ){
-            ts = t[i];
+        for ( int i = 0; i < arrayList.length; ){
+            ts = t[i++];
             if (!CanEmpty.checkNull(ts)) {
                 /* 非空数据对象 */
-                arrayList[idmark] = ts;
-                idmark++;
+                arrayList[idmark++] = ts;
             }
         }
+
         /* 有多余 */
         if (idmark < arrayList.length)
             arrayList = Arrays.copyOf(arrayList, idmark);
@@ -291,18 +257,17 @@ class Arrarys {
         int idmark = 0; // 当前标记
         @Nullable T ts;
         /* 遍历所有输入 */
-        for ( int i = 0; i < t.length; i++ ){
-            ts = t[i];
+        for ( int i = 0; i < t.length; ){
+            ts = t[i++];
             // 检查是否是空数据
             b = CanEmpty.checkNull(ts);
-            s = ts.toString(); // 转化字符串
+            s = String.valueOf(ts); // 转化字符串
             // 检查是否是空字符串
-            b |= s == null || s.isEmpty() || (s = s.trim()).isEmpty();
+            b |= s == null || (s = s.trim()).isEmpty();
             if (b)
-                /* 告辞！*/
+                // 告辞
                 continue;
-            stringArray[idmark] = s;
-            idmark++;
+            stringArray[idmark++] = s;
         }
         if (idmark < stringArray.length)
             stringArray = Arrays.copyOf(stringArray, idmark);
@@ -328,6 +293,7 @@ class Arrarys {
         // 新实例
         @NotNull final T[] newInstance = (T[]) newInstance(ts.getClass().getComponentType(),
                                                            ts.length + append.length);
+        // 拷贝
         arraycopy(ts, 0, newInstance, 0, ts.length);
         arraycopy(append, 0, newInstance, ts.length, append.length);
         return newInstance;
@@ -368,8 +334,8 @@ class Arrarys {
             return 0;
         @Nullable T t;
         int mark = ts.length;
-        for ( int i = ts.length - 1; i >= 0; i-- ){
-            t = ts[i];
+        for ( int i = ts.length - 1; i >= 0; ){
+            t = ts[i--];
             if (t != null) {
                 mark = ts.length - i;
                 break;
@@ -379,23 +345,56 @@ class Arrarys {
     }
 
     /**
+     * <p>转化为字符串类型数组.</p>
+     * <p>会调用每一个对象的{@link Object#toString()} 方法<br/>
+     * 如果其中的对象为 <b>NULL</b> 则会转换为{@code ""}</p>
+     *
+     * @param t 要转化的数组<br/>
+     *          不会被转化过程影响
+     *
+     * @return 转化为字符串的数组，如果传入的是空对象或空数组则会返回空的字符串数组
+     *
+     * @see Object#toString()
+     */
+    @NotNull
+    public static
+    <T extends Object> String[] toString(@Nullable final T[] t) {
+        // 参数检查
+        if (t == null || t.length == 0)
+            return new String[0];
+        @NotNull //* 输出结果长度必定与输入内容相同 *//
+                String[] strings = new String[t.length]; // 输出的结果
+        @Nullable String s;
+        @Nullable T ts;
+        /* 遍历输入的内容 */
+        for ( int i = 0; i < strings.length; i++ ){
+            ts = t[i];
+            if (ts == null || (s = String.valueOf(ts)) == null)
+                /* toString 后仍是 null */
+                s = "";
+            // 加入结果中
+            strings[i] = s;
+        }
+        return strings;
+    }
+
+    /**
      * <p>将数组中的元素转化为文本.</p>
      * <pre>
      * 将会把数组中的元素转逐个使用 {@link String#valueOf(Object)} 转化
      * 并在每个元素转化后加入指定的分割字符串
      * </pre>
      *
-     * @param ts 要处理的数组
      * @param s  分割字符
+     * @param ts 要处理的数组
      *
      * @return 生成的字符串
      *
      * @since PDF 1.3 expander 3
      */
-    @NonNls
     @NotNull
     public static
-    <T> String getString(@NotNull final T[] ts, String s) {
+    <T> String getString(String s, T... ts) {
         @NotNull final StringBuilder stringBuilder = new StringBuilder();
 
         for ( int i = 0; i < ts.length; i++ )
@@ -403,5 +402,18 @@ class Arrarys {
 
         stringBuilder.trimToSize();
         return stringBuilder.toString();
+    }
+
+    /** <h2>遍历处理接口</h2> */
+    public static
+    interface foreach<T> {
+        void run(T v);
+    }
+
+    /** 遍历数组 */
+    public static
+    <T> void forEach(T[] arr, foreach<T> run) {
+        for ( int i = 0; i < arr.length; i++ )
+            run.run(arr[i]);
     }
 }

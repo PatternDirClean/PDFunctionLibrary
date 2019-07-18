@@ -11,7 +11,7 @@ import com.sun.istack.internal.Nullable;
  */
 @SuppressWarnings( "all" )
 public final
-class Strings {
+class StringTOOL {
     /**
      * <p>获取字符串.</p>
      *
@@ -24,18 +24,22 @@ class Strings {
     String getString(@Nullable final Object o) {
         if (o == null)
             return null;
-        return o.toString();
+        return String.valueOf(o);
     }
 
-    /** <p>转化字符串.</p>
+    /**
+     * <p>转化字符串.</p>
+     *
      * @param o 要转化为字符串的对象
-     * @return 如果传入的是 {@code null} 则返回的是 {@code ""}*/
+     *
+     * @return 如果传入的是 {@code null} 则返回的是 {@code ""}
+     */
     @NotNull
     public static
     String valueOf(@Nullable final Object o) {
         if (o == null)
             return "";
-        return o.toString();
+        return String.valueOf(o);
     }
 
     /**

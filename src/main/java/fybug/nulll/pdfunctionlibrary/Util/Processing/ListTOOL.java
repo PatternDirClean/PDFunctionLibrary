@@ -19,11 +19,11 @@ import fybug.nulll.pdfunctionlibrary.lang.CanEmpty;
  */
 @SuppressWarnings( "all" )
 final public
-class Lists {
+class ListTOOL {
     /** {@Hide} */
     @Deprecated
     private
-    Lists() {}
+    ListTOOL() {}
 
     /*
      * UnifiedList
