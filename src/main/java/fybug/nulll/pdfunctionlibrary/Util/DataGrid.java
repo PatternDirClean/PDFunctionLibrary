@@ -10,14 +10,13 @@ import fybug.nulll.pdfunctionlibrary.lang.CanEmpty;
 import fybug.nulll.pdfunctionlibrary.lang.ConsistentField;
 import fybug.nulll.pdfunctionlibrary.lang.MaybeSynchronized;
 
-import static fybug.nulll.pdfunctionlibrary.Processing.CheckObject.equalsFidle;
-import static fybug.nulll.pdfunctionlibrary.Util.DataContainer.cloneField;
+import static fybug.nulll.pdfunctionlibrary.Processing.CheckObjectTOOL.equalsFidle;
 import static fybug.nulll.pdfunctionlibrary.lang.CanEmpty.checkNull;
+
 /**
  * <h2>数据格.</h2>
  * <pre>
  * 提供存放一格数据的对象
- * 可检查内容是否为空包括 <b>逻辑为空</b>
  * 但是如果要序列化则存放的数据也必须是 <b>可序列化</b> 的
  * </pre>
  *
@@ -34,9 +33,7 @@ import static fybug.nulll.pdfunctionlibrary.lang.CanEmpty.checkNull;
  */
 @SuppressWarnings( "All" )
 public abstract
-class DataGrid<V> extends ConsistentField
-        implements CanEmpty, Serializable, MaybeSynchronized, Cloneable
-{
+class DataGrid<V> extends ConsistentField implements Serializable, MaybeSynchronized, Cloneable {
     private static final long serialVersionUID = 4768456080120637380L;
     // V
     @Nullable protected V value = null;
@@ -60,13 +57,6 @@ class DataGrid<V> extends ConsistentField
     }
 
     @Override
-    protected
-    void finalize() throws Throwable {
-        super.finalize();
-        close();
-    }
-
-    @Override
     @NoSynchronized
     protected
     boolean consistent(@NotNull final Object obj)
@@ -77,7 +67,7 @@ class DataGrid<V> extends ConsistentField
      */
 
     /**
-     * <p>设置值数据.</p>
+     * <p>设置值.</p>
      *
      * @since PDF 1.2 expander 2
      */
@@ -85,12 +75,12 @@ class DataGrid<V> extends ConsistentField
     public abstract
     DataGrid<V> setValue(@Nullable final V value);
 
-    /** <p>获取当前值数据.</p> */
+    /** <p>获取当前值.</p> */
     @Nullable
     public final
     V getValue() { return value; }
 
-    /** <p>清除值数据.</p> */
+    /** <p>清除数据.</p> */
     @NotNull
     public
     DataGrid<V> cleanValue() { return setValue(null); }
@@ -103,44 +93,13 @@ class DataGrid<V> extends ConsistentField
      * </pre>
      */
     public final
-    boolean valueEmpty() {
+    boolean isEmpty() {
         @NotNull final V t;
         t = getValue();
         if (t != null)
             return checkNull(t);
         return true;
     }
-
-    /*
-     * CheckObject
-     */
-
-    @Override
-    public
-    boolean isNull() { return getValue() == null; }
-
-    @Override
-    public
-    boolean isEmpty() { return valueEmpty(); }
-
-    /*
-     * 释放
-     */
-
-    /** 清除值的数据 */
-    @Override
-    public
-    void clean() { setValue(null); }
-
-    /** <p>{@link #clean()}</p> */
-    @Override
-    public
-    void free() { clean(); }
-
-    /** <p>{@link #free()}</p> */
-    @Override
-    public
-    void close() { free(); }
 
     /*
      * 转化
@@ -253,6 +212,7 @@ class DataGrid<V> extends ConsistentField
     @CanSynchronized
     public static
     class Synchronized<V> extends DataGrid<V> {
+        private Object lock = new Object();
         private static final long serialVersionUID = -4075045200707176402L;
 
         protected
@@ -261,6 +221,13 @@ class DataGrid<V> extends ConsistentField
         protected
         Synchronized(@Nullable final V t) { super(t); }
 
+        @Override
+        public @NoSynchronized
+        Object clone() throws CloneNotSupportedException {
+            @NotNull final Synchronized<V> dataContainer = (Synchronized<V>) super.clone();
+            dataContainer.lock = new Object();
+            return dataContainer;
+        }
         /*
          * Value
          */
@@ -269,7 +236,7 @@ class DataGrid<V> extends ConsistentField
         @Override
         public
         DataGrid<V> setValue(@Nullable final V value) {
-            synchronized ( this ){
+            synchronized ( lock ){
                 this.value = value;
             }
             return this;

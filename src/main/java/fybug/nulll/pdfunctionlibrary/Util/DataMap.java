@@ -6,8 +6,8 @@ import fybug.nulll.pdfunctionlibrary.Annotations.CanSynchronized;
 import fybug.nulll.pdfunctionlibrary.Annotations.NoSynchronized;
 import fybug.nulll.pdfunctionlibrary.lang.CanEmpty;
 
-import static fybug.nulll.pdfunctionlibrary.Processing.CheckObject.equalsFidle;
-import static fybug.nulll.pdfunctionlibrary.Util.DataContainer.cloneField;
+import static fybug.nulll.pdfunctionlibrary.Processing.CheckObjectTOOL.equalsFidle;
+
 /**
  * <h2>数据映射.</h2>
  * <p>提供一个存放一组键值的数据映射对象<br/>
@@ -49,13 +49,6 @@ class DataMap<K, V> extends DataGrid<V> {
         @NotNull final DataMap<K, V> dataContainer = (DataMap) super.clone();
         dataContainer.key = cloneField(key);
         return dataContainer;
-    }
-
-    @Override
-    protected
-    void finalize() throws Throwable {
-        super.finalize();
-        close();
     }
 
     @Override
@@ -120,40 +113,6 @@ class DataMap<K, V> extends DataGrid<V> {
     @NotNull
     public
     DataMap<K, V> cleanValue() { return (DataMap<K, V>) super.cleanValue(); }
-
-    /*
-     * 释放
-     */
-
-    /** <p>清除键和值的数据.</p> */
-    @Override
-    public
-    void clean() {
-        super.clean();
-        cleanKey();
-    }
-
-    /** <p>{@link #clean()}</p> */
-    @Override
-    public
-    void free() {super.free();}
-
-    /** <p>{@link #free()}</p> */
-    @Override
-    public
-    void close() {super.close();}
-
-    /*
-     * CheckObject
-     */
-
-    @Override
-    public
-    boolean isNull() {return super.isNull() && getKey() == null;}
-
-    @Override
-    public
-    boolean isEmpty() {return keyEmpty() && super.isEmpty();}
 
     /*
      * 转化
@@ -269,7 +228,7 @@ class DataMap<K, V> extends DataGrid<V> {
     class Synchronized<K, V> extends DataMap<K, V> {
         private static final long serialVersionUID = 4902826450042293331L;
         // 同步锁
-        @NotNull private Object keyLock = new Object();
+        private Object lock = new Object();
 
         public
         Synchronized() { super(); }
@@ -283,7 +242,7 @@ class DataMap<K, V> extends DataGrid<V> {
         Object clone() throws CloneNotSupportedException {
             @NotNull final DataMap.Synchronized<?, ?> dataContainer =
                     (DataMap.Synchronized<?, ?>) super.clone();
-            ((DataMap.Synchronized<?, ?>) dataContainer).keyLock = new Object();
+            ((DataMap.Synchronized<?, ?>) dataContainer).lock = new Object();
             return dataContainer;
         }
 
@@ -294,7 +253,7 @@ class DataMap<K, V> extends DataGrid<V> {
         @NotNull
         public
         DataMap<K, V> setKey(@Nullable final K k) {
-            synchronized ( keyLock ){
+            synchronized ( lock ){
                 this.key = k;
             }
             return this;
@@ -308,7 +267,7 @@ class DataMap<K, V> extends DataGrid<V> {
         @Override
         public
         DataMap<K, V> setValue(@Nullable final V value) {
-            synchronized ( this ){
+            synchronized ( lock ){
                 this.value = value;
             }
             return this;
