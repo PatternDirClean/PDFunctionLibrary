@@ -3,9 +3,10 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
 /**
  * <h2>指定字节常量列表.</h2>
- * <p>该注释指定应该使用的值</p>
+ * <p>该注释解指定该使用的值</p>
  *
  * @author fybug
  * @version 0.0.2
