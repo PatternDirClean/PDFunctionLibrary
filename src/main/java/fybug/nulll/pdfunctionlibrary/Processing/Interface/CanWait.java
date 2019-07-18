@@ -2,6 +2,7 @@ package fybug.nulll.pdfunctionlibrary.Processing.Interface;
 import com.sun.istack.internal.Nullable;
 
 import fybug.nulll.pdfunctionlibrary.Annotations.CanSynchronized;
+
 /**
  * <h2>该对象需要等待.</h2>
  * <p>实现了该接口的对象可以直接调用 {@code waiting()} 方法使对象进入等待</p>
@@ -35,7 +36,6 @@ interface CanWait {
                     this.wait(i, time);
                 }
             }
-
         } catch ( Exception e ) {
             waitExcepyion(e);
         }

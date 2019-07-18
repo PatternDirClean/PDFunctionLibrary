@@ -1,5 +1,4 @@
 package fybug.nulll.pdfunctionlibrary.Processing.Stop;
-
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
 
@@ -7,6 +6,7 @@ import java.io.Serializable;
 
 import fybug.nulll.pdfunctionlibrary.Annotations.CanSynchronized;
 import fybug.nulll.pdfunctionlibrary.Util.DataGrid;
+
 /**
  * <p>中断.</p>
  * <pre>

@@ -4,6 +4,7 @@ import com.sun.istack.internal.NotNull;
 import java.io.Serializable;
 
 import fybug.nulll.pdfunctionlibrary.Annotations.CanSynchronized;
+
 /**
  * <h2>获取 {@link Stop} 单例.</h2>
  * <p>使用 {@link CallStop#INSTANCE#getInstance()} 获取</p>
@@ -30,5 +31,4 @@ enum CallStop implements Serializable {
      */
     @NotNull
     public
-    Stop getInstance() {return stop;}
-}
+    Stop getInstance() {return stop;}}

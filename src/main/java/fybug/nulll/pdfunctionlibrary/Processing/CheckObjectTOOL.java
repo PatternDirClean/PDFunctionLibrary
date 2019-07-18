@@ -4,6 +4,7 @@ import com.sun.istack.internal.Nullable;
 
 import fybug.nulll.pdfunctionlibrary.Processing.Stop.CallStop;
 import fybug.nulll.pdfunctionlibrary.Processing.Stop.MaybeStop;
+
 /**
  * <h2>参数检查工具包.</h2>
  * <pre>
@@ -16,11 +17,11 @@ import fybug.nulll.pdfunctionlibrary.Processing.Stop.MaybeStop;
  */
 @SuppressWarnings( "all" )
 public final
-class CheckObject {
+class CheckObjectTOOL {
     /** {@Hide} */
     @Deprecated
     private
-    CheckObject() {}
+    CheckObjectTOOL() {}
 
     /**
      * <p>检查类型.</p>
@@ -58,6 +59,7 @@ class CheckObject {
      */
     public static
     byte checkEquals(@NotNull final Object th, @Nullable final Object obj) {
+        /* 检查地址 */
         if (obj == th)
             return 0b01;
         return (byte) (th.getClass().isInstance(obj) ? 0b0 : 0b10);

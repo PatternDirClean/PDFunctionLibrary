@@ -2,6 +2,7 @@ package fybug.nulll.pdfunctionlibrary.Processing.Interface;
 import com.sun.istack.internal.NotNull;
 
 import fybug.nulll.pdfunctionlibrary.Annotations.CanSynchronized;
+
 /**
  * <h2>该对象需要进行休眠.</h2>
  * <p>实现了该接口的对象可以直接调用 {@code sleep()} 方法将当前线程休眠.</p>

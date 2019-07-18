@@ -1,5 +1,6 @@
 package fybug.nulll.pdfunctionlibrary.Processing.Stop;
 import com.sun.istack.internal.NotNull;
+
 /**
  * <h2>中断处理接口.</h2>
  * <p>返回处理后的消息</p>
