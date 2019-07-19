@@ -406,13 +406,13 @@ class ArraryTOOL {
 
     /** <h2>遍历处理接口</h2> */
     public static
-    interface foreach<T> {
+    interface Each<T> {
         void run(T v);
     }
 
     /** 遍历数组 */
     public static
-    <T> void forEach(T[] arr, foreach<T> run) {
+    <T> void forEach(T[] arr, Each<T> run) {
         for ( int i = 0; i < arr.length; i++ )
             run.run(arr[i]);
     }
