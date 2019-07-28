@@ -413,7 +413,19 @@ class ArraryTOOL {
     /** 遍历数组 */
     public static
     <T> void forEach(T[] arr, Each<T> run) {
-        for ( int i = 0; i < arr.length; i++ )
-            run.run(arr[i]);
+        if (arr == null || arr.length == 0 || run == null)
+            return;
+        for ( int i = 0; i < arr.length; )
+            run.run(arr[i++]);
+    }
+
+    /** 检查是否在数组中有该元素 */
+    public static
+    <T> boolean inArray(T[] arr, T o) {
+        for ( int i = 0; i < arr.length; ){
+            if (arr[i++].equals(o))
+                return true;
+        }
+        return false;
     }
 }

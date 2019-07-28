@@ -9,7 +9,7 @@ import java.util.List;
 
 import fybug.nulll.pdfunctionlibrary.Processing.Sort.SortMode.FileMode;
 import fybug.nulll.pdfunctionlibrary.Processing.Sort.SortMode.Mode;
-import fybug.nulll.pdfunctionlibrary.Util.Processing.Lists;
+import fybug.nulll.pdfunctionlibrary.Util.Processing.ListTOOL;
 /**
  * <h2>选择排序.</h2>
  * <p>用于对各种数据进行排序，排序方式为选择排序</p>
@@ -22,7 +22,6 @@ import fybug.nulll.pdfunctionlibrary.Util.Processing.Lists;
 @SuppressWarnings( "all" )
 public final
 class SelectionSort {
-
     /** {@Hide} */
     @Deprecated
     private
@@ -778,7 +777,7 @@ class SelectionSort {
         for ( int index = 0, lenght = file.length; index < lenght; index++ ){
             linkedList = file[index];
 
-            list = (LinkedList<String>) Lists.toString(linkedList);
+            list = (LinkedList<String>) ListTOOL.toString(linkedList);
             // 腾出空间
             linkedList.clear();
 
