@@ -29,6 +29,4 @@ include 'services:webservice'
 */
 
 rootProject.name = 'PDFunctionLibrary'
-include 'BDPos'
-include 'BDPos'
 
