@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.Predicate;
 
 import fybug.nulll.pdfunctionlibrary.Processing.CheckObjectTOOL;
 import fybug.nulll.pdfunctionlibrary.Processing.Stop.CallStop;
@@ -45,6 +46,9 @@ class ListLockContainer<T extends ListLockContainer> implements CanEmpty {
     /** <p>列表容器.</p> */
     @NotNull private final Map<String, List<?>> INTERFACE = new HashMap<>();
 
+    protected
+    ListLockContainer() {}
+
     /**
      * <p>生成存储列表.</p>
      * <p>使用名称生成 {@link List} 并生成对应的 {@link ReentrantReadWriteLock}</p>
@@ -54,7 +58,7 @@ class ListLockContainer<T extends ListLockContainer> implements CanEmpty {
      * @throws Stop 被关闭
      */
     @MaybeStop
-    protected
+    protected final
     void pushInterface(final @Nls @NotNull String name) {
         MapWriteLock();
         try {
@@ -76,10 +80,9 @@ class ListLockContainer<T extends ListLockContainer> implements CanEmpty {
      *
      * @throws Stop 没有该列表或被关闭
      */
-    @SafeVarargs
     @NotNull
     @MaybeStop
-    public final
+    public
     <V> T addInterface(final @Nls @NotNull String listname, @Nullable V... o) {
         /* 检查数据 */
         if ((o = trim(o)).length == 0)
@@ -95,6 +98,7 @@ class ListLockContainer<T extends ListLockContainer> implements CanEmpty {
 
     /**
      * <p>从列表中移除指定的数据.</p>
+     * <p>一个一个对比的方式进行移除，效率较低。当 {@code equals} 返回 {@code true} 时才会删除</p>
      *
      * @param listname 列表名称
      * @param o        要移除的数据
@@ -105,8 +109,7 @@ class ListLockContainer<T extends ListLockContainer> implements CanEmpty {
      */
     @NotNull
     @MaybeStop
-    @SafeVarargs
-    public final
+    public
     <V> T delInterface(final @Nls @NotNull String listname, @Nullable V... o) {
         V[] os = trim(o);
         if (os.length == 0)
@@ -123,6 +126,57 @@ class ListLockContainer<T extends ListLockContainer> implements CanEmpty {
     /**
      * <p>通过接口遍历指定列表.</p>
      *
+     * @param li          列表
+     * @param forEachList 处理接口
+     * @param p           检查是否继续的接口
+     *
+     * @return this
+     *
+     * @throws Stop 没有该列表
+     */
+    @NotNull
+    @MaybeStop
+    public
+    <V> T foreachInterface(final @NotNull List<V> li, final ForEachList<V> forEachList,
+            Predicate<V> p)
+    {
+        V tmp;
+        /* 遍历 */
+        for ( int i = 0, len = li.size(); i < len; ){
+            tmp = li.get(i++);
+            forEachList.run(li, tmp);
+            if (!p.test(tmp))
+                break;
+        }
+
+        return (T) this;
+    }
+
+    /**
+     * <p>通过接口遍历指定列表.</p>
+     *
+     * @param listname    列表名称
+     * @param forEachList 处理接口
+     * @param p           检查是否继续的接口
+     *
+     * @return this
+     *
+     * @throws Stop 没有该列表
+     */
+    @NotNull
+    @MaybeStop
+    public
+    <V> T foreachInterface(final @Nls @NotNull String listname, final ForEachList<V> forEachList,
+            Predicate<V> p)
+    {
+        foreachInterface((List<V>) readInterface(listname), forEachList, p);
+        InterfaceReadUn(listname);
+        return (T) this;
+    }
+
+    /**
+     * <p>通过接口遍历指定列表.</p>
+     *
      * @param listname    列表名称
      * @param forEachList 处理接口
      *
@@ -132,16 +186,9 @@ class ListLockContainer<T extends ListLockContainer> implements CanEmpty {
      */
     @NotNull
     @MaybeStop
-    public final
-    <V> T foreachInterface(final @Nls @NotNull String listname, final ForEachList forEachList) {
-        List<V> li = (List<V>) readInterface(listname);
-        /* 遍历 */
-        for ( int i = 0, len = li.size(); i < len; )
-            forEachList.run(li, li.get(i++));
-
-        InterfaceReadUn(listname);
-        return (T) this;
-    }
+    public
+    <V> T foreachInterface(final @Nls @NotNull String listname, final ForEachList<V> forEachList)
+    { return foreachInterface(listname, forEachList, v -> true); }
 
     /* MAPLOCK */
 
@@ -151,7 +198,7 @@ class ListLockContainer<T extends ListLockContainer> implements CanEmpty {
      * @return 锁
      */
     @NotNull
-    protected
+    protected final
     ReentrantReadWriteLock MapLock() { return LOCK; }
 
     /**
@@ -160,9 +207,9 @@ class ListLockContainer<T extends ListLockContainer> implements CanEmpty {
      * @return 该读取锁
      */
     @NotNull
-    protected
+    protected final
     Lock MapReadLock() {
-        Lock r = MapLock().writeLock();
+        Lock r = MapLock().readLock();
 
         r.lock();
         return r;
@@ -174,9 +221,9 @@ class ListLockContainer<T extends ListLockContainer> implements CanEmpty {
      * @return 该读取锁
      */
     @NotNull
-    protected
+    protected final
     Lock MapReadUn() {
-        Lock r = MapLock().writeLock();
+        Lock r = MapLock().readLock();
 
         r.unlock();
         return r;
@@ -188,7 +235,7 @@ class ListLockContainer<T extends ListLockContainer> implements CanEmpty {
      * @return 该写入锁
      */
     @NotNull
-    protected
+    protected final
     Lock MapWriteLock() {
         Lock w = MapLock().writeLock();
 
@@ -211,7 +258,7 @@ class ListLockContainer<T extends ListLockContainer> implements CanEmpty {
     }
 
     /** <p>解除容器读写锁.</p> */
-    protected
+    protected final
     void MapUn() {
         ReentrantReadWriteLock lock = MapLock();
         lock.writeLock().unlock();
@@ -237,7 +284,8 @@ class ListLockContainer<T extends ListLockContainer> implements CanEmpty {
         try {
             if (INTERFACE_LOCK.containsKey(name))
                 return INTERFACE_LOCK.get(name);
-            throw CallStop.INSTANCE.getInstance();
+            else
+                throw CallStop.INSTANCE.getInstance();
         } finally {
             MapReadUn();
         }
@@ -371,6 +419,7 @@ class ListLockContainer<T extends ListLockContainer> implements CanEmpty {
         MapReadLock();
 
         try {
+            checkclose();
             InterfaceReadLock(name);
             return getInterface(name);
         } finally {
@@ -393,6 +442,7 @@ class ListLockContainer<T extends ListLockContainer> implements CanEmpty {
     protected
     List<?> writeInterface(@Nls String name) {
         MapReadLock();
+
         try {
             checkclose();
             InterfaceWriteLock(name);
@@ -413,6 +463,7 @@ class ListLockContainer<T extends ListLockContainer> implements CanEmpty {
     protected
     void setInterface(@Nls String name, @NotNull List<?> list) {
         MapWriteLock();
+
         try {
             checkclose();
             INTERFACE.put(name, list);
@@ -472,6 +523,7 @@ class ListLockContainer<T extends ListLockContainer> implements CanEmpty {
         MapReadLock();
         boolean b = close;
         MapReadUn();
+
         return b;
     }
 

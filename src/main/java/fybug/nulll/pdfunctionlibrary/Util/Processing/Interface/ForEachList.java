@@ -8,6 +8,6 @@ import java.util.List;
  * @version 0.0.1
  */
 public
-interface ForEachList {
-    <T> void run(List<T> list, T v);
+interface ForEachList<V> {
+    void run(List<V> list, V v);
 }

@@ -11,9 +11,18 @@ import fybug.nulll.pdfunctionlibrary.Processing.Stop.MaybeStop;
  * @version 0.0.3
  * @since PDF 1.2
  */
-@SuppressWarnings( "all" )
 public
 interface NeedInit {
+    NeedInit empy = new NeedInit() {
+        @Override
+        public
+        void init() throws Exception { }
+
+        @Override
+        public
+        void destroy() throws Exception { }
+    };
+
     /** <p>初始化.</p> */
     @MaybeStop
     void init() throws Exception;
