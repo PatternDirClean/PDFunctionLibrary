@@ -498,6 +498,8 @@ class ListLockContainer<T extends ListLockContainer> implements CanEmpty {
     @Override
     public
     void free() {
+        clean();
+
         MapWriteLock();
 
         INTERFACE.clear();
@@ -530,11 +532,7 @@ class ListLockContainer<T extends ListLockContainer> implements CanEmpty {
     /** <p>检查是否关闭.</p> */
     protected
     void checkclose() {
-        MapReadLock();
-        boolean b = close;
-        MapReadUn();
-
-        if (b)
+        if (isNull())
             throw CallStop.INSTANCE.getInstance();
     }
 }

@@ -25,12 +25,6 @@ class ArraryTOOL {
     private
     ArraryTOOL() {}
 
-    /* STAT
-     * UnifiedArray
-     *
-     * 修整数组
-     */
-
     /**
      * <p>修整数组.</p>
      *
@@ -41,92 +35,6 @@ class ArraryTOOL {
     @Nullable
     public static
     <T> T[] unifiedArray(@Nullable final T[] t) { return t == null || t.length == 0 ? null : t; }
-
-    /**
-     * <p>修整数组.</p>
-     *
-     * @param t 要修整的数组
-     *
-     * @return 如果对象是空对象或空数组则会返回{@code null}
-     */
-    @Nullable
-    public static
-    byte[] unifiedArray(@Nullable final byte[] t)
-    { return t == null || t.length == 0 ? null : t; }
-
-    /**
-     * <p>修整数组.</p>
-     *
-     * @param t 要修整的数组
-     *
-     * @return 如果对象是空对象或空数组则会返回{@code null}
-     */
-    @Nullable
-    public static
-    short[] unifiedArray(@Nullable final short[] t)
-    { return t == null || t.length == 0 ? null : t; }
-
-    /**
-     * <p>修整数组.</p>
-     *
-     * @param t 要修整的数组
-     *
-     * @return 如果对象是空对象或空数组则会返回{@code null}
-     */
-    @Nullable
-    public static
-    char[] unifiedArray(@Nullable final char[] t)
-    { return t == null || t.length == 0 ? null : t; }
-
-    /**
-     * <p>修整数组.</p>
-     *
-     * @param t 要修整的数组
-     *
-     * @return 如果对象是空对象或空数组则会返回{@code null}
-     */
-    @Nullable
-    public static
-    int[] unifiedArray(@Nullable final int[] t) { return t == null || t.length == 0 ? null : t; }
-
-    /**
-     * <p>修整数组.</p>
-     *
-     * @param t 要修整的数组
-     *
-     * @return 如果对象是空对象或空数组则会返回{@code null}
-     */
-    @Nullable
-    public static
-    long[] unifiedArray(@Nullable final long[] t)
-    { return t == null || t.length == 0 ? null : t; }
-
-    /**
-     * <p>修整数组.</p>
-     *
-     * @param t 要修整的数组
-     *
-     * @return 如果对象是空对象或空数组则会返回{@code null}
-     */
-    @Nullable
-    public static
-    double[] unifiedArray(@Nullable final double[] t)
-    { return t == null || t.length == 0 ? null : t; }
-
-    /**
-     * <p>修整数组.</p>
-     *
-     * @param t 要修整的数组
-     *
-     * @return 如果对象是空对象或空数组则会返回{@code null}
-     */
-    @Nullable
-    public static
-    float[] unifiedArray(@Nullable final float[] t)
-    { return t == null || t.length == 0 ? null : t; }
-    /* END
-     * UnifiedArray
-     */
 
     /*
      * 算法
@@ -234,47 +142,6 @@ class ArraryTOOL {
     }
 
     /**
-     * <p>转化为字符串数组并清除空项.</p>
-     * <p>如果是{@link CanEmpty}的子类<br/>
-     * 将会调用{@link CanEmpty#isNull()}和 {@link CanEmpty#isEmpty()}判断是否是空数据<br/>
-     * 以及转化为字符串后仍是空字符串的数据</p>
-     *
-     * @param t 要转换的数组 <br/>
-     *          不会被转化和过滤过程影响
-     *
-     * @return 转化后的数组，如果传入的是空对象或空数组则会返回空的字符串数组
-     *
-     * @see #trim(Object[])
-     * @see #toString(Object[])
-     */
-    @NotNull
-    public static
-    <T extends Object> String[] toStringTrim(@Nullable final T[] t) {
-        if (t == null || t.length == 0)
-            return new String[0];
-        @Nullable String s, stringArray[] = new String[t.length];
-        boolean b;
-        int idmark = 0; // 当前标记
-        @Nullable T ts;
-        /* 遍历所有输入 */
-        for ( int i = 0; i < t.length; ){
-            ts = t[i++];
-            // 检查是否是空数据
-            b = CanEmpty.checkNull(ts);
-            s = String.valueOf(ts); // 转化字符串
-            // 检查是否是空字符串
-            b |= s == null || (s = s.trim()).isEmpty();
-            if (b)
-                // 告辞
-                continue;
-            stringArray[idmark++] = s;
-        }
-        if (idmark < stringArray.length)
-            stringArray = Arrays.copyOf(stringArray, idmark);
-        return stringArray;
-    }
-
-    /**
      * <p>将新数据添加到旧数据后面.</p>
      *
      * @param ts     旧数据
@@ -344,66 +211,6 @@ class ArraryTOOL {
         return mark;
     }
 
-    /**
-     * <p>转化为字符串类型数组.</p>
-     * <p>会调用每一个对象的{@link Object#toString()} 方法<br/>
-     * 如果其中的对象为 <b>NULL</b> 则会转换为{@code ""}</p>
-     *
-     * @param t 要转化的数组<br/>
-     *          不会被转化过程影响
-     *
-     * @return 转化为字符串的数组，如果传入的是空对象或空数组则会返回空的字符串数组
-     *
-     * @see Object#toString()
-     */
-    @NotNull
-    public static
-    <T extends Object> String[] toString(@Nullable final T[] t) {
-        // 参数检查
-        if (t == null || t.length == 0)
-            return new String[0];
-        @NotNull //* 输出结果长度必定与输入内容相同 *//
-                String[] strings = new String[t.length]; // 输出的结果
-        @Nullable String s;
-        @Nullable T ts;
-        /* 遍历输入的内容 */
-        for ( int i = 0; i < strings.length; i++ ){
-            ts = t[i];
-            if (ts == null || (s = String.valueOf(ts)) == null)
-                /* toString 后仍是 null */
-                s = "";
-            // 加入结果中
-            strings[i] = s;
-        }
-        return strings;
-    }
-
-    /**
-     * <p>将数组中的元素转化为文本.</p>
-     * <pre>
-     * 将会把数组中的元素转逐个使用 {@link String#valueOf(Object)} 转化
-     * 并在每个元素转化后加入指定的分割字符串
-     * </pre>
-     *
-     * @param s  分割字符
-     * @param ts 要处理的数组
-     *
-     * @return 生成的字符串
-     *
-     * @since PDF 1.3 expander 3
-     */
-    @NotNull
-    public static
-    <T> String getString(String s, T... ts) {
-        @NotNull final StringBuilder stringBuilder = new StringBuilder();
-
-        for ( int i = 0; i < ts.length; i++ )
-            stringBuilder.append(String.valueOf(ts[i])).append(s);
-
-        stringBuilder.trimToSize();
-        return stringBuilder.toString();
-    }
-
     /** <h2>遍历处理接口</h2> */
     public static
     interface Each<T> {
@@ -422,10 +229,9 @@ class ArraryTOOL {
     /** 检查是否在数组中有该元素 */
     public static
     <T> boolean inArray(T[] arr, T o) {
-        for ( int i = 0; i < arr.length; ){
+        for ( int i = 0; i < arr.length; )
             if (arr[i++].equals(o))
                 return true;
-        }
         return false;
     }
 }
