@@ -1,14 +1,23 @@
 package fybug.nulll.pdfunctionlibrary.expandwith;
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Closeable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+/**
+ * <h2>异步任务驱动.</h2>
+ *
+ * @author fybug
+ * @version 0.0.1
+ * @since lang 0.0.3
+ */
 public final
 class AsnyDirte implements Closeable {
+    /** 全局驱动 */
     @NotNull public static final AsnyDirte GLODAL = new AsnyDirte();
 
-    /** <p>线程池.</p> */
+    /** 线程池. */
     private volatile ExecutorService pool;
 
     public

@@ -1,6 +1,7 @@
 package fybug.nulll.pdfunctionlibrary.Util.Processing;
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -40,8 +41,7 @@ class FileTOOL {
         /** <p>留下文件夹.</p> */
         Dir,
         /** <p>留下文件.</p> */
-        File
-    }
+        File}
 
     /**
      * <p>过滤路径组.</p>
@@ -207,7 +207,8 @@ class FileTOOL {
      */
     public static
     boolean isIn(@NotNull final File dad, @NotNull final File son) {
-        @NotNull String data = integrationPath(dad.toString()), sons = integrationPath(son.toString());
+        @NotNull String data = integrationPath(dad.toString()), sons = integrationPath(
+                son.toString());
         int dadlenght = data.length();
         if (sons.length() >= dadlenght && sons.substring(0, dadlenght).equals(data))
             return true;

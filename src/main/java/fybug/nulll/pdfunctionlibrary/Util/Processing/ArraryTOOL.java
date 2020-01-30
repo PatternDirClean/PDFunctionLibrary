@@ -1,23 +1,23 @@
 package fybug.nulll.pdfunctionlibrary.Util.Processing;
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
-import fybug.nulll.pdfunctionlibrary.lang.CanEmpty;
+import fybug.nulll.pdfunctionlibrary.Util.Processing.Interface.Element;
+import fybug.nulll.pdfunctionlibrary.Util.Processing.Interface.ObjectCoupler;
 
-import static java.lang.System.arraycopy;
-import static java.lang.reflect.Array.newInstance;
 /**
- * <h2>数组相关算法类.</h2>
+ * <h2>数组相关工具类.</h2>
  *
  * @author fybug
- * @version 0.0.7
- * @since PDF 1.2
+ * @version 0.0.8
+ * @since Processing 0.0.1
  */
-@SuppressWarnings( "All" )
 final public
 class ArraryTOOL {
     /** {@Hide} */
@@ -26,212 +26,441 @@ class ArraryTOOL {
     ArraryTOOL() {}
 
     /**
-     * <p>修整数组.</p>
+     * 清除数组中的空项.
+     * <p>
+     * 清除数组中的 {@code null} 并整理剩余的数据
+     *
+     * @param ts 要检查的数组,不会被过滤过程影响
+     *
+     * @return 返回处理过的数组
+     */
+    @NotNull
+    public static
+    <T> T[] trim(@Nullable T... ts) {
+        if (ts.length == 0)
+            // 没有数据
+            return ts;
+
+        final int[] pushindex = {0}; // 填充的位置
+        T[] newarr = (T[]) Array.newInstance(ts.getClass().getComponentType(), ts.length);
+
+        /* 检查数据 */
+        forEach(ts, t -> {
+            if (t == null)
+                // 丢弃
+                return;
+
+            // 保存
+            newarr[pushindex[0]++] = t;
+        });
+
+        /* 长度冗余 */
+        if (pushindex[0] < ts.length)
+            return Arrays.copyOf(newarr, pushindex[0]);
+
+        return newarr;
+    }
+
+    /**
+     * 对未知对象进行 {@link #trim(Object[])} 操作
+     *
+     * @since ArraryTOOL 0.0.8
+     */
+    @NotNull
+    public static
+    Object trimForNaviter(@Nullable Object t) {
+        if (t == null || !t.getClass().isArray())
+            // 不是数组
+            throw new ClassCastException("not array");
+
+        int len; // 长度
+        if ((len = Array.getLength(t)) == 0)
+            // 莫得数据
+            return t;
+
+        final int[] pushindex = {0}; // 当前填充位置
+        Object newarr = Array.newInstance(t.getClass().getComponentType(), len); // 返回的数组
+
+        /* 检查 */
+        forEachForNaviter(t, v -> {
+            if (v == null)
+                // 去除
+                return;
+            // 保存
+            Array.set(newarr, pushindex[0]++, v);
+        });
+
+        /* 长度冗余 */
+        if (pushindex[0] < len) {
+            Object rearr = Array.newInstance(t.getClass().getComponentType(), pushindex);
+            System.arraycopy(newarr, 0, rearr, 0, pushindex[0]);
+            return rearr;
+        }
+
+        return newarr;
+    }
+
+    /**
+     * 修整数组.
      *
      * @param t 要修整的数组
      *
-     * @return 如果对象是空对象或空数组则会返回{@code null}
+     * @return 传入 {@code null | []} 返回 {@code null}
+     *
+     * @since ArraryTOOL 0.0.8
      */
     @Nullable
     public static
-    <T> T[] unifiedArray(@Nullable final T[] t) { return t == null || t.length == 0 ? null : t; }
+    Object unifiedArray(@Nullable Object t) {
+        if (t == null)
+            return null;
 
-    /*
-     * 算法
-     */
+        Class c = t.getClass();
+        if (!c.isArray())
+            // 不是数组
+            throw new ClassCastException("not array");
+
+        if (Array.getLength(t) == 0)
+            return null;
+
+        return t;
+    }
 
     /**
-     * <p>数组类型转化.</p>
-     * <pre>
+     * 修整数组.
+     *
+     * @param t      要修整的数组
+     * @param tClass 数组对象类型
+     *
+     * @return 传入 {@code null} 返回 {@code []}
+     *
+     * @since ArraryTOOL 0.0.8
+     */
+    @NotNull
+    public static
+    <T> T[] unifiedArray(@Nullable Object t, Class<T> tClass) {
+        if (t == null)
+            return (T[]) Array.newInstance(tClass, 0);
+
+        Class c = t.getClass();
+        if (!c.isArray())
+            // 不是数组
+            throw new ClassCastException("not array");
+
+        return (T[]) t;
+    }
+
+    /**
+     * 数组类型转化.
+     * <p>
      * 转化为另一种类型的数组
-     * 并会检查空数组
      * 需要使用接口对遍历到的对象进行转换
-     * 会忽略转化过程中的空对象
-     * </pre>
      *
      * @param <U>     转换后的类型
-     * @param <T>     要转换的类型
+     * @param <T>     转换前的类型
      * @param in      要转换的数组
      * @param coupler 耦合器
-     * @param outType 转换为的数组类型
+     * @param outType 转换后的数组中的类型
      *
-     * @return 转换并清除空对象后的数组，如果参数为空数组或{@code null} 则会返回空数组
+     * @return 转化后的数组，传入 {@code null | []} 都会返回新类型的空数组
      */
     @NotNull
     public static
-    <T, U> U[] conversionArrayType(@Nullable final T[] in,
-            @NotNull final ObjectCoupler<U, T> coupler, @NotNull final Class<U> outType)
+    <T, U> U[] conversionArrayType(@NotNull T[] in, ObjectCoupler<U, T> coupler, Class<U> outType)
     {
-        int length = 0;
-        /* 检查数据 */
-        if (in == null || (length = in.length) == 0)
-            return (U[]) newInstance(outType, 0);
+        if (in == null || in.length == 0)
+            return (U[]) Array.newInstance(outType, 0);
 
-        int index = 0; // 当前转化位置指针
-        @NotNull U[] out = (U[]) newInstance(outType, length); // 新的数组
-        @Nullable T t;
+        final int[] index = {0};
+        U[] newarr = (U[]) Array.newInstance(outType, in.length);
 
-        for ( int i = 0; i < length; i++ ){
-            t = in[i];
-            if (t == null)
-                continue;
+        forEach(in, i -> newarr[index[0]++] = coupler.conversionTo(i));
 
-            // 使用接口进行转化
-            out[index++] = coupler.conversionTo(t);
-        }
-
-        return out;
+        return newarr;
     }
 
     /**
-     * <p>对象转换器.</p>
-     * <pre>
-     * 用于在两个对象之间进行转换
-     * 通常进行单方面转换
-     * </pre>
+     * 对未知对象进行 {@link #conversionArrayType(Object[], ObjectCoupler, Class)} 操作
      *
-     * @param <T> 要转换的类型
-     * @param <U> 转换为该类型
-     *
-     * @author fybug
-     * @version 0.0.1
-     * @since PDF 1.2
-     */
-    public
-    interface ObjectCoupler<U, T> {
-        /** <p>在该方法进行对象转换.</p> */
-        @Nullable
-        U conversionTo(@NotNull final T in);
-    }
-
-    /**
-     * <p>清除数组中的空项.</p>
-     * <p>如果是{@link CanEmpty}的子类<br/>
-     * 将会调用{@link CanEmpty#isNull()}和{@link CanEmpty#isEmpty()}判断是否是空数据</p>
-     *
-     * @param t 要检查的数组<br/>
-     *          不会被过滤过程影响
-     *
-     * @return 返回清除了空数据的数组，如果传入的是空对象或空数组则会返回空的数组
-     *
-     * @see CanEmpty
+     * @since ArraryTOOL 0.0.8
      */
     @NotNull
     public static
-    <T extends Object> T[] trim(@Nullable final T[] t) {
-        // 参数检查
-        if (t == null || t.length == 0)
-            return t;
-        @NotNull T[] arrayList = (T[]) Array.newInstance(t.getClass().getComponentType(), t.length);
-        @Nullable T ts;
-        int idmark = 0; // 标记位置
+    <U> U[] conversionArrayTypeForNaviter(@NotNull Object in, ObjectCoupler<U, Object> coupler,
+            Class<U> outType)
+    {
+        if (in == null || !in.getClass().isArray())
+            // 不是数组
+            throw new ClassCastException("not array");
 
-        /* 遍历输入的数据 */
-        for ( int i = 0; i < arrayList.length; ){
-            ts = t[i++];
-            if (!CanEmpty.checkNull(ts)) {
-                /* 非空数据对象 */
-                arrayList[idmark++] = ts;
-            }
-        }
+        int len; // 长度
+        if ((len = Array.getLength(in)) == 0)
+            // 空数组
+            return (U[]) Array.newInstance(outType, 0);
 
-        /* 有多余 */
-        if (idmark < arrayList.length)
-            arrayList = Arrays.copyOf(arrayList, idmark);
-        return arrayList;
+        final int[] i = {0}; // 当前填充位置
+        U[] newarr = (U[]) Array.newInstance(outType, len); // 新的数组
+
+        /* 逐个转换 */
+        forEachForNaviter(in, v -> newarr[i[0]++] = coupler.conversionTo(v));
+
+        return newarr;
     }
 
     /**
-     * <p>将新数据添加到旧数据后面.</p>
+     * 追加数据到数组中
+     * <p>
+     * 旧数必须为数组，追加的数据根据其类型可能会有不同的追加形式
+     * <p>
+     * 当追加的数据为一个数组或 {@link Collection} 的实现类时，将会取出其中的数据追加到旧数据后
+     * 其余情况将会直接追加到就数据后
      *
-     * @param ts     旧数据
-     * @param append 新数据
+     * @param in  旧数据
+     * @param add 追加的数据
      *
-     * @return 添加数据后的的数组
+     * @return 与旧数据为一个类型的数组
      */
     @NotNull
     public static
-    <T> T[] append(@Nullable final T[] ts, final T... append) {
-        if (ts == null)
-            return append;
-        if (append.length == 0)
-            return ts;
+    Object append(@NotNull Object in, Object add) {
+        Class c;
+        if (in == null || !(c = in.getClass()).isArray())
+            // 不是数组
+            throw new ClassCastException("not array");
 
-        // 新实例
-        @NotNull final T[] newInstance = (T[]) newInstance(ts.getClass().getComponentType(),
-                                                           ts.length + append.length);
-        // 拷贝
-        arraycopy(ts, 0, newInstance, 0, ts.length);
-        arraycopy(append, 0, newInstance, ts.length, append.length);
-        return newInstance;
-    }
+        if (add == null)
+            return in;
 
-    /**
-     * <p>将新数据添加到旧数据后面.</p>
-     *
-     * @param ts      旧数据
-     * @param appends 新数据
-     *
-     * @return 添加数据后的数组
-     */
-    @NotNull
-    public static
-    <T> T[] append(@Nullable final T[] ts, @Nullable final Collection<T> appends) {
-        @NotNull T[] append = (T[]) newInstance(ts.getClass().getComponentType(), appends.size());
-        append = appends.toArray(append);
-        return append(ts, append);
-    }
+        Object newarr; // 组合数组
+        int len = Array.getLength(in);
+        int addlen;
 
-    /**
-     * <p>获取数组的内容长度.</p>
-     * <pre>
-     * 获取数组的实际内容长度
-     *
-     * 从最后的位置开始检查{@code NULL} 对象
-     * 直到没有{@code NULL} 对象为止
-     * </pre>
-     *
-     * @param ts 要检查的数组
-     *
-     * @return 如果参数为 {@code NULL} 则返回 {@code 0}
-     */
-    public static
-    <T> int getContentLength(@Nullable final T[] ts) {
-        if (ts == null)
-            return 0;
-        @Nullable T t;
-        int mark = ts.length;
-        for ( int i = ts.length - 1; i >= 0; ){
-            t = ts[i--];
-            if (t != null) {
-                mark = ts.length - i;
-                break;
-            }
+        /* 追加数组 */
+        if (add.getClass().isArray()) {
+            addlen = Array.getLength(add);
+
+            newarr = Array.newInstance(c.getComponentType(), len + addlen);
+
+            System.arraycopy(in, 0, newarr, 0, len);
+            System.arraycopy(add, 0, newarr, len, addlen);
+
+            return newarr;
         }
-        return mark;
+
+        /* 追加数据对象 */
+        if (add instanceof Collection) {
+            addlen = ((Collection) add).size();
+
+            newarr = Array.newInstance(c.getComponentType(), len + addlen);
+
+            System.arraycopy(in, 0, newarr, 0, len);
+
+            int i = len;
+            for ( Object o : ((Collection) add) )
+                Array.set(newarr, i++, o);
+
+            return newarr;
+        }
+
+        newarr = Array.newInstance(c.getComponentType(), len + 1);
+
+        System.arraycopy(in, 0, newarr, 0, len);
+        Array.set(newarr, len, add);
+
+        return newarr;
     }
 
-    /** <h2>遍历处理接口</h2> */
+    /**
+     * 遍历数组
+     * <p>
+     * 使用接口遍历数组类似 {@link Collection#forEach(Consumer)}
+     *
+     * @param arr 要遍历的数组
+     * @param run 遍历接口
+     */
     public static
-    interface Each<T> {
-        void run(T v);
-    }
-
-    /** 遍历数组 */
-    public static
-    <T> void forEach(T[] arr, Each<T> run) {
+    <T> void forEach(@Nullable T[] arr, Consumer<T> run) {
         if (arr == null || arr.length == 0 || run == null)
             return;
         for ( int i = 0; i < arr.length; )
-            run.run(arr[i++]);
+            run.accept(arr[i++]);
+    }
+
+    /** 对一个未知对象进行 {@link #forEach(Object[], Consumer)} 操作 */
+    public static
+    void forEachForNaviter(@NotNull Object arr, Consumer run) {
+        if (arr == null || !arr.getClass().isArray())
+            // 不是数组
+            throw new ClassCastException("not array");
+
+        int len; // 长度
+
+        if ((len = Array.getLength(arr)) == 0)
+            // 不用跑
+            return;
+
+        for ( int i = 0; i < len; )
+            run.accept(Array.get(arr, i++));
     }
 
     /** 检查是否在数组中有该元素 */
     public static
-    <T> boolean inArray(T[] arr, T o) {
+    <T> boolean inArray(@Nullable T[] arr, @Nullable T o) {
+        if (arr == null || o == null || arr.length == 0)
+            return false;
+
         for ( int i = 0; i < arr.length; )
             if (arr[i++].equals(o))
                 return true;
         return false;
+    }
+
+    /**
+     * 快照风格的遍历数据
+     * <p>
+     * 遍历前使用 {@link Arrays#copyOf(Object[], int)} 拷贝一份数组进行。
+     * 源数组的改变不会影响到遍历的结果
+     *
+     * @param arr 要遍历的数组
+     * @param run 遍历接口
+     *
+     * @since ArraryTOOL 0.0.8
+     */
+    public static
+    <T> void copyOfRead(@Nullable T[] arr, Consumer<T> run) {
+        if (arr == null || arr.length == 0)
+            // 无法遍历
+            return;
+
+        T[] newarr = Arrays.copyOf(arr, arr.length);
+
+        for ( int i = 0; i < arr.length; )
+            run.accept(newarr[i++]);
+    }
+
+    /**
+     * 操作数组
+     * <p>
+     * 快照风格遍历同时操作数组，使用接口 {@link Element} 对当前指向的位置进行操作
+     * 游标只可向前，不可回退
+     *
+     * @param ts  要操作的数组
+     * @param run 允许接口
+     *
+     * @return 操作后的数组，与源数组不相同
+     *
+     * @since ArraryTOOL 0.0.8
+     */
+    @Nullable
+    public static
+    <T> T[] operation(@Nullable T[] ts, Consumer<Element<T>> run) {
+        if (ts == null || ts.length == 0)
+            return ts;
+
+        int i = 0; // 当前位置
+        T[] nowarr = Arrays.copyOf(ts, ts.length); // 当前快照
+        operationElement<T> element; // 当前操作对象
+
+        /* 遍历 */
+        for ( ; i < nowarr.length; i++ ){
+            element = new operationElement<>();
+            element.telement = nowarr[i];
+            element.i = i;
+            element.nowarr = nowarr;
+
+            run.accept(element);
+
+            i = element.i;
+            nowarr = element.nowarr;
+        }
+
+        return nowarr;
+    }
+
+    /**
+     * <h2>操作用接口.</h2>
+     *
+     * @author fybug
+     * @version 0.0.1
+     * @since ArraryTOOL 0.0.8
+     */
+    private static
+    class operationElement<T> implements Element<T> {
+        /** 当前元素节点 */
+        T telement;
+        int i;
+        T[] nowarr;
+
+        public
+        T get() { return telement; }
+
+        public
+        void delete() {
+            T[] newarr = (T[]) Array.newInstance(nowarr.getClass().getComponentType(),
+                                                 nowarr.length - 1);
+
+            System.arraycopy(nowarr, 0, newarr, 0, i);
+
+            if (i < nowarr.length - 1)
+                // 不是最后一个
+                System.arraycopy(nowarr, i + 1, newarr, i, newarr.length - i);
+
+            --i;
+            nowarr = newarr;
+        }
+
+        public
+        void append(T t) {
+            T[] newarr = (T[]) Array.newInstance(nowarr.getClass().getComponentType(),
+                                                 nowarr.length + 1);
+
+            newarr[i + 1] = t;
+            System.arraycopy(nowarr, 0, newarr, 0, i + 1);
+
+            if (i < nowarr.length - 1)
+                // 不是最后一个
+                System.arraycopy(nowarr, i + 1, newarr, i + 2, nowarr.length - i - 1);
+
+            nowarr = newarr;
+        }
+
+        public
+        void prepend(T t) {
+            T[] newarr = (T[]) Array.newInstance(nowarr.getClass().getComponentType(),
+                                                 nowarr.length + 1);
+
+            newarr[i] = t;
+            if (i > 0)
+                System.arraycopy(nowarr, 0, newarr, 0, i);
+            System.arraycopy(nowarr, i, newarr, i + 1, nowarr.length - i);
+
+            ++i;
+
+            nowarr = newarr;
+        }
+
+        public
+        void set(T t) { nowarr[i] = t; }
+
+        public
+        void remove() { set(null); }
+
+        public
+        void removeIf(Predicate<T> predicate) {
+            if (predicate.test(get()))
+                remove();
+        }
+
+        public
+        void deleteIf(Predicate<T> predicate) {
+            if (predicate.test(get()))
+                delete();
+        }
+
+        public
+        void setIf(T t, Predicate<T> predicate) {
+            if (predicate.test(get()))
+                set(t);
+        }
     }
 }
