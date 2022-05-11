@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  * @author fybug
  * @version 0.0.2
  * @see NoSynchronized
- * @since PDF 1.2
+ * @since Annotations 0.0.3
  */
 @Retention( RetentionPolicy.CLASS )
 @Target( {ElementType.ANNOTATION_TYPE, ElementType.TYPE, ElementType.METHOD, ElementType.PACKAGE,

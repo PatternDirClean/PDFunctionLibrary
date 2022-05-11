@@ -3,7 +3,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.SoftReference;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -86,13 +85,28 @@ class FuckCharTOOL {
     }
 
     /**
+     * <p>获取默认过滤规则.</p>
+     *
+     * @return 返回过滤规则映射
+     */
+    @NotNull
+    public static
+    HashMap<String, String> FUCKCHAR_MAP() {
+        HashMap<String, String> map = new HashMap<>() {{
+            put("@", "@000");
+        }};
+        map.putAll(getMap());
+        return map;
+    }
+
+    /**
      * <p>获取 sql 语句过滤规则.</p>
      *
      * @return 返回过滤规则数组
      */
     @NotNull
     public static synchronized
-    String[] FUCKCHAR_SQL() {
+    String[] FUCKCHAR_SQL_LIST() {
         @Nullable String[] maps;
         /* 检查是否有缓存数据 */
         if (sql == null || (maps = sql.get()) == null) {
@@ -110,44 +124,44 @@ class FuckCharTOOL {
 
     /**
      * <p>过滤字符.</p>
-     * <p>根据传入的规则进行过滤</p>
+     * <p>根据规则对字符串进行过滤</p>
      *
-     * @param s   要过滤的字符串
-     * @param arr 字符过滤规则
+     * @param s 要过滤的字符串
      *
      * @return 过滤后的字符串
      */
     @NotNull
     public static
-    String fuckChar(@NotNull final String s, @NotNull final String[] arr) {
-        return replaceChar(s,
-                           // 取出需要的数据
-                           MapTOOL.unionMap(getMap(), Arrays.asList(arr)));
-    }
+    String fuckChar(@NotNull final String s) { return replaceChar(s, getMap(), false); }
 
     /**
      * <p>恢复过滤的字符.</p>
-     * <p>根据过滤时用的规则进行恢复</p>
+     * <p>根据规则对字符串进行恢复</p>
      *
-     * @param s   要恢复的字符串
-     * @param arr 过滤时用的规则
+     * @param s 要恢复的字符串
      *
      * @return 恢复后的字符串
      */
     @NotNull
     public static
-    String refuckChar(@NotNull final String s, @NotNull final String[] arr) {
-        return replaceChar(s,
-                           MapTOOL.MapKeyToValue(MapTOOL.unionMap(getMap(), Arrays.asList(arr))));
-    }
+    String refuckChar(@NotNull final String s)
+    { return replaceChar(s, MapTOOL.MapKeyToValue(getMap()), true); }
 
     /** <p>根据规则替换字符.</p> */
     private static
-    String replaceChar(String s, Map<String, String> arr) {
-        s = s.replaceAll("@", "@000");
+    String replaceChar(String s, Map<String, String> arr, boolean re) {
+        // 如果是过滤，则先处理 @ 字符
+        if (!re) {
+            s = s.replaceAll("@", "@000");
+        }
+        // 处理字符串
         for ( Map.Entry<String, String> sarr : arr.entrySet() )
             s = s.replaceAll(sarr.getKey(), sarr.getValue());
 
+        // 如果是恢复，则最后恢复 @ 字符
+        if (re) {
+            s = s.replaceAll("@000", "@");
+        }
         return s;
     }
 }

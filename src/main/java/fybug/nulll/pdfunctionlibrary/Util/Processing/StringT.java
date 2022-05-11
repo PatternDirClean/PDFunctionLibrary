@@ -11,28 +11,45 @@ import static fybug.nulll.pdfunctionlibrary.Util.Processing.ArraryTOOL.forEach;
  * <h2>字符串相关工具类.</h2>
  *
  * @author fybug
- * @version 0.0.2
+ * @version 0.0.3
  * @since Processing 0.0.1
  */
 public final
-class StringTOOL {
+class StringT {
     /**
-     * 获取字符串.
+     * 检查字符串是否是空字符串
+     * <p>
+     * 包含 {@code null}、{@code "   "}
      *
-     * @param o 要获取其中字符串的对象
+     * @return boolean
      *
-     * @return 传入 {@code null} 返回 {@code null},获取 {@code null | ""} 也返回 {@code null}
+     * @since StringT 0.0.3
      */
-    @Nullable
     public static
-    String getString(@Nullable Object o) {
-        if (o == null)
-            return null;
-        String s = String.valueOf(o);
+    boolean stringIsEmpty(@Nullable String s) {
+        if (s == null)
+            return true;
+        s = s.trim();
+        return s.isEmpty();
+    }
 
-        if (s == null || s.isEmpty())
-            return null;
-
+    /**
+     * 缺省字符串过滤
+     * <p>
+     * 包含 {@code null}、{@code ""}
+     *
+     * @param s   要检查的字符串
+     * @param des 缺省情况下的字符串
+     *
+     * @return String
+     *
+     * @since StringT 0.0.3
+     */
+    public static
+    String nonEmptyElse(String s, String des) {
+        // 检查是否为 null 或空字符串
+        if (s == null || "".equals(s = s.trim()))
+            return des == null ? "" : des;
         return s;
     }
 
@@ -41,7 +58,7 @@ class StringTOOL {
      *
      * @param o 要转化为字符串的对象
      *
-     * @return 传入 {@code null} 返回 {@code ""},获取 {@code null} 也返回 {@code ""}
+     * @return 传入 {@code null} 返回 {@code ""},转换后为 {@code null} 也返回 {@code ""}
      */
     @NotNull
     public static
@@ -58,7 +75,7 @@ class StringTOOL {
     }
 
     /**
-     * 返回在此字符串中出现指定字符处的次数.
+     * 返回在此字符串中出现指定字符串的次数.
      *
      * @param srcText  被查找的字符串
      * @param findText 要查找的字符串
@@ -83,11 +100,13 @@ class StringTOOL {
         return count;
     }
 
+    /*--------------------------------------------------------------------------------------------*/
+
     /**
      * 解析字符数组.
      * <p>
-     * 解析样式为 [s,d,a,f,g,e,] 的字符串为字符串数组
-     * 结束符 ']' 可以没有，但是开始符 '[' 必须有
+     * 解析样式为 [s,d,a,f,g,e,] 的字符串为字符串数组<br/>
+     * 结束符 ']' 可以没有，但是开始符 '[' 必须有<br/>
      * 会忽略中途的空格
      *
      * @param s 要解析的字符
@@ -95,7 +114,7 @@ class StringTOOL {
      * @return 如果没有可以解析的字符串则会返回空数组
      *
      * @throws NullPointerException 传入空对象
-     * @since StringTOOL 0.0.2
+     * @since StringT 0.0.2
      */
     @Nullable
     public static
@@ -160,7 +179,7 @@ class StringTOOL {
      *
      * @return 以 {@code "[string,string]"} 方式返回
      *
-     * @since StringTOOL 0.0.2
+     * @since StringT 0.0.2
      */
     @NotNull
     @NonNls
@@ -174,7 +193,7 @@ class StringTOOL {
 
         /* 填充数据到缓冲区 */
         forEach(sarr, v -> {
-            if (getString(v) == null)
+            if (stringIsEmpty(v))
                 // 当前数据不符合规范
                 return;
 
