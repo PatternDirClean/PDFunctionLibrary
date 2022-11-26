@@ -1,8 +1,9 @@
 /**
- * <h2>数据类型.</h2>
- * <p>该包下存放数据容器，用于存储对象</p>
+ * <h2>工具.</h2>
+ * <p>该包下存放未分类的工具类</p>
  *
  * @author fybug
  * @version 0.0.4
+ * @since PDFunctionLibrary 0.0.2
  */
 package fybug.nulll.pdfunctionlibrary.Util;
