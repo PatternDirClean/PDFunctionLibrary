@@ -15,5 +15,7 @@ gradle-app.setting
 .gradle/*
 .idea/*
 build/
+gradlew.bat
+gradlew
 
 /*.iml
