@@ -3,19 +3,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  * <h2>路径相关工具类.</h2>
  *
  * @author fybug
- * @version 0.0.5
+ * @version 0.0.6
  * @see File
  * @since Processing 0.0.1
  */
@@ -23,7 +23,7 @@ import java.util.Iterator;
 public final
 class FileT {
     /**
-     * <p>路径分隔符.</p>
+     * 路径分隔符
      *
      * @see File#pathSeparatorChar
      */
@@ -55,7 +55,6 @@ class FileT {
      *
      * @see RemoveTast
      */
-    @NotNull
     public static
     Collection<File> removeFile(@Nullable Collection<File> f, @NotNull final RemoveTast r) {
         // 检查参数
@@ -63,9 +62,9 @@ class FileT {
             return f;
 
         //* 使用遍历器保证速度和兼容性 *//
-        @NotNull Iterator<File> iter = f.iterator();
+        Iterator<File> iter = f.iterator();
         // 获取当前数据
-        @NotNull File file;
+        File file;
 
         while( iter.hasNext() ){
             /* 过滤所有数据 */
@@ -89,7 +88,7 @@ class FileT {
         }
         return f;
     }
- // todo 直接在File.list中获取指定类型
+
     /**
      * 过滤路径组
      *
@@ -98,10 +97,10 @@ class FileT {
      * @param r 过滤方式，指定的类型将会被删掉
      *
      * @return 返回过滤好的的数组, 如果参数错误，或传入的是空数组则会直接返回
+     *
      * @see RemoveTast
      * @see #removeFile(Collection<File>,RemoveTast)
      */
-    @NotNull
     public static
     File[] removeFile(@Nullable File[] f, @NotNull final RemoveTast r) {
         // 无可过滤或者参数出错
@@ -111,11 +110,74 @@ class FileT {
         //* 要检查的数据，读写量大的时候使用 LinkList 加快速度 *//
         LinkedList<File> arrayList = new LinkedList<>();
         // 加入当前数据
-        for ( int i = 0; i < f.length; i++ ){
+        for ( int i = 0; i < f.length; i++ )
             arrayList.add(f[i]);
-        }
 
-        return removeFile(arrayList,r).toArray(File[]::new);
+        return removeFile(arrayList, r).toArray(File[]::new);
+    }
+
+    //------------------------------------------
+
+    /**
+     * 获取指定路径下的子目录路径并进行过滤
+     * <p>
+     * 只留下 {@link File#isDirectory()} 为 {@code true} 的路径
+     *
+     * @param file       要获取的目录，为 {@code null} 时返回 {@code null}
+     * @param fileFilter 过滤用的方法，可以为 {@code null}
+     *
+     * @return 过滤后的路径组
+     *
+     * @see File#listFiles(FileFilter)
+     * @see #listDir(File, FileFilter, boolean)
+     * @since FileT 0.0.6
+     */
+    public static
+    File[] listDir(@Nullable File file, @Nullable FileFilter fileFilter)
+    { return listDir(file, fileFilter, true); }
+
+    /**
+     * 获取指定路径下的文件路径并进行过滤
+     * <p>
+     * 只留下 {@link File#isFile()} 为 {@code true} 的路径
+     *
+     * @param file       要获取的目录，为 {@code null} 时返回 {@code null}
+     * @param fileFilter 过滤用的方法，可以为 {@code null}
+     *
+     * @return 过滤后的路径组
+     *
+     * @see File#listFiles(FileFilter)
+     * @see #listDir(File, FileFilter, boolean)
+     * @since FileT 0.0.6
+     */
+    public static
+    File[] listFile(@Nullable File file, @Nullable FileFilter fileFilter)
+    { return listDir(file, fileFilter, false); }
+
+    /**
+     * 获取指定路径下的子路径并进行过滤
+     *
+     * @param file       要获取的目录，为 {@code null} 时返回 {@code null}
+     * @param fileFilter 过滤用的方法，可以为 {@code null}
+     * @param getdir     为 {@code true} 时留下目录，反之留下文件
+     *
+     * @return 过滤后的路径组
+     *
+     * @see File#listFiles(FileFilter)
+     * @since FileT 0.0.6
+     */
+    private static
+    File[] listDir(@Nullable File file, @Nullable FileFilter fileFilter, boolean getdir) {
+        // 检查参数
+        if (file == null || !file.isDirectory())
+            return null;
+        // 检查过滤函数
+        FileFilter fs = fileFilter == null ? f -> true : fileFilter;
+
+        // 获取列表并过滤
+        if (getdir)
+            return file.listFiles(f -> f.isDirectory() && fs.accept(f));
+        return file.listFiles(f -> f.isFile() && fs.accept(f));
     }
 
     /*--------------------------------------------------------------------------------------------*/
@@ -132,7 +194,6 @@ class FileT {
      *
      * @return 格式化过后的路径
      */
-    @NotNull
     public static
     String integrationPath(@Nullable String data) {
         // 无可格式化
@@ -142,8 +203,8 @@ class FileT {
         if ((data = data.trim()).isEmpty())
             return "";
 
-        @NotNull //* 转成字符缓存区，减少过滤的内存开销 *//
-                StringBuilder stringBuffer = new StringBuilder(data);
+        // 转成字符缓存区
+        var stringBuffer = new StringBuilder(data);
         // 要截取的位置
         int mark = 0;
         // 当前检查的字符
@@ -177,7 +238,7 @@ class FileT {
 
         // 删除从结尾到标记位置的部分
         stringBuffer.delete(mark, stringBuffer.length());
-        @NotNull String out = stringBuffer.toString();
+        var out = stringBuffer.toString();
         // 释放资源
         stringBuffer.delete(0, stringBuffer.length());
         return out;
@@ -195,10 +256,11 @@ class FileT {
      */
     public static
     boolean isIn(@NotNull File dad, @NotNull File son) {
-        String data = integrationPath(dad.toString()), sons = integrationPath(son.toString());
-        int dadlenght = data.length();
+        var dadstring = integrationPath(dad.toString());
+        var sonstring = integrationPath(son.toString());
+        int dadlenght = dadstring.length();
         // 提取子路径的前端与父路径对比
-        if (sons.length() >= dadlenght && sons.substring(0, dadlenght).equals(data))
+        if (sonstring.length() >= dadlenght && sonstring.substring(0, dadlenght).equals(dadstring))
             return true;
         return false;
     }
@@ -218,8 +280,8 @@ class FileT {
         if (file == null)
             return true;
         if (file.isDirectory()) {
-            @Nullable File[] fs = file.listFiles();
-            return fs == null || fs.length == 0;
+            var files = file.listFiles();
+            return files == null || files.length == 0;
         } else if (file.isFile()) {
             return file.length() == 0;
         } else
@@ -264,7 +326,7 @@ class FileT {
         assuranceDir(path);
 
         /* 检查文件是否存在 */
-        Path filepath = path.resolve(filename);
+        var filepath = path.resolve(filename);
         if (Files.exists(filepath)) {
             if (Files.isDirectory(filepath))
                 throw new IOException("文件路径：" + filepath.toAbsolutePath() + " 被目录占用");
@@ -283,12 +345,16 @@ class FileT {
      * @param filename 文件名
      *
      * @return 一个长度为2的数组，内容为拆分后的文件名和后缀名
+     *
+     * @see #getsuffix(String, boolean)
      */
     public static
-    String[] getsuffix(String filename) { return getsuffix(filename, false);}
+    String[] getsuffix(@NotNull String filename) { return getsuffix(filename, false);}
 
-    /** todo 结果不够清晰
+    /**
      * 分离文件拓展名
+     * <p>
+     * 输入 a/b/c.j 将会返回 ['a/b/c','j']
      *
      * @param filename 文件名
      * @param getLast  是否从后往前查找
@@ -296,7 +362,7 @@ class FileT {
      * @return 一个长度为2的数组，内容为拆分后的文件名和后缀名
      */
     public static
-    String[] getsuffix(String filename, boolean getLast) {
+    String[] getsuffix(@NotNull String filename, boolean getLast) {
         int index;
         if (getLast)
             index = filename.lastIndexOf('.');

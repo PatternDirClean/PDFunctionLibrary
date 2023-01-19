@@ -5,7 +5,12 @@ import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 
-/** ip 地址工具 */
+/**
+ * <h2>ip 地址工具.</h2>
+ *
+ * @version 0.0.1
+ * @since Util 0.0.1
+ */
 public
 class IpUilt {
     /** 地址标识头 */
