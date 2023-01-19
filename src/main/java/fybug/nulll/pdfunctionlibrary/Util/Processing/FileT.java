@@ -47,11 +47,11 @@ class FileT {
     /**
      * 过滤路径组
      *
-     * @param f 要过滤的路径组<br/>
+     * @param f 要过滤的路径列表<br/>
      *          会被过滤过程影响，直接返回该对象
-     * @param r 过滤方式
+     * @param r 过滤方式，指定的类型将会被删掉
      *
-     * @return 返回过滤的对象, 如果参数错误，或传入的是空数组则会直接返回
+     * @return 返回传入的列表对象, 如果参数错误，或传入的是空对象则会直接返回
      *
      * @see RemoveTast
      */
@@ -62,9 +62,10 @@ class FileT {
         if (f == null || f.size() == 0 || r == null)
             return f;
 
-        @NotNull //* 使用遍历器保证速度和兼容性 *//
-                Iterator<File> iter = f.iterator();
-        @NotNull File file; // 获取当前数据
+        //* 使用遍历器保证速度和兼容性 *//
+        @NotNull Iterator<File> iter = f.iterator();
+        // 获取当前数据
+        @NotNull File file;
 
         while( iter.hasNext() ){
             /* 过滤所有数据 */
@@ -88,15 +89,17 @@ class FileT {
         }
         return f;
     }
-
+ // todo 直接在File.list中获取指定类型
     /**
      * 过滤路径组
      *
      * @param f 要过滤的路径组<br/>
      *          不会被过滤过程所影响
-     * @param r 过滤方式
+     * @param r 过滤方式，指定的类型将会被删掉
      *
+     * @return 返回过滤好的的数组, 如果参数错误，或传入的是空数组则会直接返回
      * @see RemoveTast
+     * @see #removeFile(Collection<File>,RemoveTast)
      */
     @NotNull
     public static
@@ -105,37 +108,14 @@ class FileT {
         if (f == null || f.length == 0 || r == null)
             return f;
 
-        @NotNull //* 要检查的数据，读取量大的时候使用 ArrayList 加快速度 *//
-                ArrayList<File> arrayList = new ArrayList(Arrays.asList(f));
-
-        /* 遍历所有输入 */
-        for ( int i = 0, length = arrayList.size(); i < length; length = arrayList.size() ){
-            if (arrayList.get(i) == null) {
-                arrayList.remove(i);
-                if (i + 1 == length)
-                    break;
-            }
-
-            /* 根据参数进行过滤 */
-            switch ( r ) {
-                case Dir:
-                    if (!arrayList.get(i).isDirectory()) {
-                        arrayList.remove(i);
-                        continue;
-                    }
-                    break;
-                case File:
-                    if (!arrayList.get(i).isFile()) {
-                        arrayList.remove(i);
-                        continue;
-                    }
-                    break;
-            }
-            i++;
+        //* 要检查的数据，读写量大的时候使用 LinkList 加快速度 *//
+        LinkedList<File> arrayList = new LinkedList<>();
+        // 加入当前数据
+        for ( int i = 0; i < f.length; i++ ){
+            arrayList.add(f[i]);
         }
-        @NotNull //* 生成数组，准备返回 *//
-                File[] out = new File[arrayList.size()];
-        return arrayList.toArray(out);
+
+        return removeFile(arrayList,r).toArray(File[]::new);
     }
 
     /*--------------------------------------------------------------------------------------------*/
