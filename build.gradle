@@ -8,7 +8,7 @@ tasks.withType(JavaCompile) {
 }
 
 group 'fybug.nulll'
-version '0.0.3'
+version '0.0.4'
 sourceCompatibility = '14'
 targetCompatibility = '14'
 
@@ -44,5 +44,8 @@ dependencies {
 }
 
 test {
+    dependencies {
+        testCompile "junit:junit:4.12"
+    }
     useJUnitPlatform()
 }
