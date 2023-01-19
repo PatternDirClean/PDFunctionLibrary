@@ -287,7 +287,7 @@ class FileT {
     public static
     String[] getsuffix(String filename) { return getsuffix(filename, false);}
 
-    /**
+    /** todo 结果不够清晰
      * 分离文件拓展名
      *
      * @param filename 文件名
