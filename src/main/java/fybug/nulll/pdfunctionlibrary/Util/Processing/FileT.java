@@ -38,7 +38,7 @@ class FileT {
      *
      * @since FileT 0.0.7
      */
-    private
+    public static
     void DeleteAll(File file, boolean delself) {
         if (file.isFile() && delself) {
             file.delete();
