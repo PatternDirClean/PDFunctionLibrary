@@ -7,6 +7,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -15,7 +16,7 @@ import java.util.LinkedList;
  * <h2>路径相关工具类.</h2>
  *
  * @author fybug
- * @version 0.0.6
+ * @version 0.0.7
  * @see File
  * @since Processing 0.0.1
  */
@@ -28,6 +29,70 @@ class FileT {
      * @see File#pathSeparatorChar
      */
     public static final char FILESEPARATOR = File.separatorChar;
+
+    /**
+     * 删除指定文件或目录内全部文件和文件夹
+     *
+     * @param file    要删除的路径
+     * @param delself 是否删除自身，为 {@code false} 时且路径为文件时不进行删除
+     *
+     * @since FileT 0.0.7
+     */
+    private
+    void DeleteAll(File file, boolean delself) {
+        if (file.isFile() && delself) {
+            file.delete();
+        } else if (file.isDirectory()) {
+            // 记录堆栈
+            LinkedList<LinkedList<File>> fileslist = new LinkedList<>();
+            // 二层堆栈
+            LinkedList<File> files = new LinkedList<>();
+            File file1;
+            File[] filestmp;
+
+            // 添加初始列表
+            fileslist.add(files);
+            // 是否删掉自身
+            if (delself) {
+                // 自身加入列表
+                files.add(file);
+            } else {
+                // 只加入内部的路径
+                files.addAll(Arrays.asList(file.listFiles()));
+            }
+
+            // 遍历所有文件及文件夹
+            f1:
+            while( (files = fileslist.peek()) != null ){
+                // 处理当前堆栈
+                while( (file1 = files.peek()) != null ){
+                    // 检查是否存在
+                    if (!file1.exists()) {
+                        files.pop();
+                    } // 文件直接删除
+                    else if (file1.isFile()) {
+                        files.pop().delete();
+                    } // 目录检查当前数据
+                    else if (file1.isDirectory()) {
+                        filestmp = file1.listFiles();
+                        // 空目录直接删除
+                        if (filestmp.length == 0) {
+                            files.pop().delete();
+                        } else {
+                            // 存储当前目录的内容为下次处理数据
+                            files = new LinkedList<>();
+                            files.addAll(Arrays.asList(filestmp));
+                            fileslist.push(files);
+                            // 跳过当前堆栈推出
+                            continue f1;
+                        }
+                    }
+                }
+                // 删除完成后退出当前堆栈
+                fileslist.pop();
+            }
+        }
+    }
 
     /*--------------------------------------------------------------------------------------------*/
 
