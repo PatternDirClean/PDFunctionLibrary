@@ -40,12 +40,59 @@ repositories {
 
 dependencies {
     implementation fileTree(dir: 'lib', includes: ['*.jar'])
-    compile "org.jetbrains:annotations:17.0.0"
+    compileOnly "org.jetbrains:annotations:17.0.0"
+
+    testCompile "junit:junit:4.12"
+    testCompileOnly "org.jetbrains:annotations:17.0.0"
 }
 
-test {
-    dependencies {
-        testCompile "junit:junit:4.12"
+task PDFunctionLibrary(type: Jar) {
+    destinationDirectory = file('jar')
+    manifest {
+        attributes(
+                'Manifest-Version': '1.0',
+                'Built-By': 'fybug/风雨bu改',
+                'Created-By': 'IntelliJ IDEA'
+        )
     }
-    useJUnitPlatform()
+    archiveFileName = 'PDF.jar'
+    // 打包编译输出
+    from sourceSets.main.output
+}
+
+task PDFunctionLibrary_all(type: Jar) {
+    destinationDirectory = file('jar')
+    manifest {
+        attributes(
+                'Manifest-Version': '1.0',
+                'Built-By': 'fybug/风雨bu改',
+                'Created-By': 'IntelliJ IDEA'
+        )
+    }
+    archiveFileName = 'PDF_all.jar'
+    // 打包编译输出
+    from sourceSets.main.output
+    // 打包源码
+    from sourceSets.main.allSource
+}
+
+task PDFunctionLibrary_sources(type: Jar) {
+    destinationDirectory = file('jar')
+    manifest {
+        attributes(
+                'Manifest-Version': '1.0',
+                'Built-By': 'fybug/风雨bu改',
+                'Created-By': 'IntelliJ IDEA'
+        )
+    }
+    archiveFileName = 'PDF_sources.jar'
+    // 打包源码
+    from sourceSets.main.allSource
+}
+
+task release {
+    dependsOn clean
+    dependsOn PDFunctionLibrary_all
+    dependsOn PDFunctionLibrary
+    dependsOn PDFunctionLibrary_sources
 }
