@@ -3,19 +3,16 @@ plugins {
     id 'idea'
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = "UTF-8"
 }
 
 group 'fybug.nulll'
 version '0.0.4'
-sourceCompatibility = '14'
-targetCompatibility = '14'
 
-configurations {
-    developmentOnly
-    runtimeClasspath {
-        extendsFrom developmentOnly
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(23)
     }
 }
 
@@ -47,17 +44,13 @@ dependencies {
 
     compileOnly "org.jetbrains:annotations:+"
     annotationProcessor "org.jetbrains:annotations:+"
-    compileOnly "org.projectlombok:lombok:+"
-    annotationProcessor "org.projectlombok:lombok:+"
 
-    testImplementation "junit:junit:4.12"
+    testImplementation 'junit:junit:4.13.1'
     testCompileOnly "org.jetbrains:annotations:+"
     testAnnotationProcessor "org.jetbrains:annotations:+"
-    testCompileOnly "org.projectlombok:lombok:+"
-    testAnnotationProcessor "org.projectlombok:lombok:+"
 }
 
-task PDFunctionLibrary(type: Jar) {
+tasks.register('PDFunctionLibrary', Jar) {
     destinationDirectory = file('jar')
     manifest {
         attributes(
@@ -71,7 +64,7 @@ task PDFunctionLibrary(type: Jar) {
     from sourceSets.main.output
 }
 
-task PDFunctionLibrary_all(type: Jar) {
+tasks.register('PDFunctionLibrary_all', Jar) {
     destinationDirectory = file('jar')
     manifest {
         attributes(
@@ -87,7 +80,7 @@ task PDFunctionLibrary_all(type: Jar) {
     from sourceSets.main.allSource
 }
 
-task PDFunctionLibrary_sources(type: Jar) {
+tasks.register('PDFunctionLibrary_sources', Jar) {
     destinationDirectory = file('jar')
     manifest {
         attributes(
@@ -101,7 +94,7 @@ task PDFunctionLibrary_sources(type: Jar) {
     from sourceSets.main.allSource
 }
 
-task release {
+tasks.register('release') {
     dependsOn clean
     dependsOn PDFunctionLibrary_all
     dependsOn PDFunctionLibrary

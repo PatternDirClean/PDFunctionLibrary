@@ -4,7 +4,7 @@
 # PDFunctionLibrary
 
 ![java library](https://img.shields.io/badge/type-Libary-gr.svg "type")
-![JDK 14](https://img.shields.io/badge/JDK-14-green.svg "SDK")
+![JDK 23](https://img.shields.io/badge/JDK-14-green.svg "SDK")
 ![Gradle 6.5](https://img.shields.io/badge/Gradle-6.5-04303b.svg "tool")
 ![Apache 2](https://img.shields.io/badge/license-Apache%202-blue.svg "License")
 
